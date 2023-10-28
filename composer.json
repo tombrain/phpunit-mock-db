@@ -14,8 +14,14 @@
     "support": {
         "issues": "https://github.com/czukowski/phpunit-mock-db/issues"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/tombrain/phpunit-sql.git"
+        }  	    
+    ],
     "require": {
-        "czukowski/phpunit-sql": "^9.0",
+        "tombrain/phpunit-sql": "^9.0",
         "phpunit/phpunit": "^10.0"
     },
     "autoload": {
