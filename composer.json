@@ -1,5 +1,5 @@
 {
-    "name": "czukowski/phpunit-mock-db",
+    "name": "tombrain/phpunit-mock-db",
     "type": "library",
     "description": "Database Abstraction Layer mocking helpers for PHPUnit",
     "keywords": ["phpunit", "database", "mock"],
