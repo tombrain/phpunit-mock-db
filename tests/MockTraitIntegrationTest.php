@@ -133,10 +133,10 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $mock = $this->createDatabaseMock();
-        $mock->expects(static::at(1))
+        $mock->expects(static::at_hidingDeprecatedWarning(1))
             ->query($query2)
             ->willSetLastInsertId($expected2);
-        $mock->expects(static::at(2))
+        $mock->expects(static::at_hidingDeprecatedWarning(2))
             ->query($query3)
             ->willSetLastInsertId($expected3);
         $mock->expects(static::once())

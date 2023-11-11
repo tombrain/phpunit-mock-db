@@ -114,7 +114,7 @@ class MatcherInvocationWrapperTest extends Testcase
                 FALSE,
             ],
             [
-                static::at(0),
+                static::at_hidingDeprecatedWarning(0),
                 FALSE,
             ],
             [
@@ -150,10 +150,10 @@ class MatcherInvocationWrapperTest extends Testcase
                 fn (self $testCase) => static::once(),
                 FALSE,
             ],
-            // [
-            //     static::at(0),
-            //     FALSE,
-            // ],
+            [
+                static::at_hidingDeprecatedWarning(0),
+                FALSE,
+            ],
             [
                 fn (self $testCase) => static::any(),
                 FALSE,
