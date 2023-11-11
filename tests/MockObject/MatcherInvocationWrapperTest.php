@@ -114,7 +114,7 @@ class MatcherInvocationWrapperTest extends Testcase
                 FALSE,
             ],
             [
-                static::at_hidingDeprecatedWarning(0),
+                fn (self $testCase) => static::at_hidingDeprecatedWarning(0),
                 FALSE,
             ],
             [
@@ -151,7 +151,7 @@ class MatcherInvocationWrapperTest extends Testcase
                 FALSE,
             ],
             [
-                static::at_hidingDeprecatedWarning(0),
+                fn (self $testCase) => static::at_hidingDeprecatedWarning(0),
                 FALSE,
             ],
             [
