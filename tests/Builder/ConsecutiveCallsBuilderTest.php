@@ -21,24 +21,20 @@ use Cz\PHPUnit\MockDB\Stub,
  */
 class ConsecutiveCallsBuilderTest extends Testcase
 {
-    /**
-     * @dataProvider  provideDone
-     */
-    public function testDone(InvocationMocker $builder): void
+    public function testDone(): void
     {
+        $builder = $this->createMock(InvocationMocker::class);
         $object = new ConsecutiveCallsBuilder(
             $builder,
             $this->createMock(ConsecutiveCallsStub::class)
         );
         $actual = $object->done();
-        $this->assertSame($builder, $actual);
+        static::assertSame($builder, $actual);
     }
 
-    public function provideDone(): array
+    public function testWillMock(): void
     {
-        return [
-            [$this->createMock(InvocationMocker::class)],
-        ];
+        $this->_testWill($this->createMock(Stub::class));
     }
 
     /**
@@ -46,22 +42,12 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWill(Stub $argument): void
     {
-        $stub = $this->createMock(ConsecutiveCallsStub::class);
-        $stub->expects($this->once())
-            ->method('addStub')
-            ->with($argument);
-        $object = new ConsecutiveCallsBuilder(
-            $this->createMock(InvocationMocker::class),
-            $stub
-        );
-        $actual = $object->will($argument);
-        $this->assertSame($object, $actual);
+        $this->_testWill($argument);
     }
 
-    public function provideWill(): array
+    public static function provideWill(): array
     {
         return [
-            [$this->createMock(Stub::class)],
             [new ReturnResultSetStub([])],
             [new SetAffectedRowsStub(0)],
             [new SetLastInsertIdStub(1)],
@@ -69,20 +55,33 @@ class ConsecutiveCallsBuilderTest extends Testcase
         ];
     }
 
+    private function _testWill(Stub $argument): void
+    {
+        $stub = $this->createMock(ConsecutiveCallsStub::class);
+        $stub->expects(static::once())
+            ->method('addStub')
+            ->with($argument);
+        $object = new ConsecutiveCallsBuilder(
+            $this->createMock(InvocationMocker::class),
+            $stub
+        );
+        $actual = $object->will($argument);
+        static::assertSame($object, $actual);
+    }
     /**
      * @dataProvider  provideWillInvokeCallback
      */
     public function testWillInvokeCallback(callable $callback): void
     {
         $object = $this->createMockObjectForWillTest(function ($stub) use ($callback) {
-            $this->assertStub($stub, InvokeCallbackStub::class, 'callback', $callback);
+            static::assertStub($stub, InvokeCallbackStub::class, 'callback', $callback);
             return TRUE;
         });
         $actual = $object->willInvokeCallback($callback);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillInvokeCallback(): array
+    public static function provideWillInvokeCallback(): array
     {
         return [
             [function () {}],
@@ -95,14 +94,14 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public function testWillReturnResultSet(iterable $resultSet): void
     {
         $object = $this->createMockObjectForWillTest(function ($stub) use ($resultSet) {
-            $this->assertStub($stub, ReturnResultSetStub::class, 'value', $resultSet);
+            static::assertStub($stub, ReturnResultSetStub::class, 'value', $resultSet);
             return TRUE;
         });
         $actual = $object->willReturnResultSet($resultSet);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillReturnResultSet(): array
+    public static function provideWillReturnResultSet(): array
     {
         $resultSet1 = [];
         $resultSet2 = [
@@ -121,14 +120,14 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public function testWillSetAffectedRows(?int $count): void
     {
         $object = $this->createMockObjectForWillTest(function ($stub) use ($count) {
-            $this->assertStub($stub, SetAffectedRowsStub::class, 'value', $count);
+            static::assertStub($stub, SetAffectedRowsStub::class, 'value', $count);
             return TRUE;
         });
         $actual = $object->willSetAffectedRows($count);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillSetAffectedRows(): array
+    public static function provideWillSetAffectedRows(): array
     {
         return [
             [NULL],
@@ -143,14 +142,14 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public function testWillSetLastInsertId($value): void
     {
         $object = $this->createMockObjectForWillTest(function ($stub) use ($value) {
-            $this->assertStub($stub, SetLastInsertIdStub::class, 'value', $value);
+            static::assertStub($stub, SetLastInsertIdStub::class, 'value', $value);
             return TRUE;
         });
         $actual = $object->willSetLastInsertId($value);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillSetLastInsertId(): array
+    public static function provideWillSetLastInsertId(): array
     {
         return [
             [NULL],
@@ -165,14 +164,14 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public function testWillThrowException(Throwable $value): void
     {
         $object = $this->createMockObjectForWillTest(function ($stub) use ($value) {
-            $this->assertStub($stub, ThrowExceptionStub::class, 'exception', $value);
+            static::assertStub($stub, ThrowExceptionStub::class, 'exception', $value);
             return TRUE;
         });
         $actual = $object->willThrowException($value);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillThrowException(): array
+    public static function provideWillThrowException(): array
     {
         return [
             [new RuntimeException],
@@ -187,11 +186,11 @@ class ConsecutiveCallsBuilderTest extends Testcase
     {
         $object = $this->getMockBuilder(ConsecutiveCallsBuilder::class)
             ->disableOriginalConstructor()
-            ->setMethods(['will'])
+            ->onlyMethods(['will'])
             ->getMock();
-        $object->expects($this->once())
+        $object->expects(static::once())
             ->method('will')
-            ->with($this->callback($checkArgument))
+            ->with(static::callback($checkArgument))
             ->willReturn($object);
         return $object;
     }

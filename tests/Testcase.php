@@ -29,7 +29,7 @@ abstract class Testcase extends FrameworkTestCase
      * @param   string  $name
      * @return  mixed
      */
-    protected function getObjectPropertyValue($object, string $name)
+    protected static function getObjectPropertyValue($object, string $name)
     {
         $property = new ReflectionProperty($object, $name);
         $property->setAccessible(TRUE);

@@ -20,20 +20,20 @@ class QueryMatcherTest extends Testcase
     public function testMatches(string $query, bool $expected): void
     {
         $constraint = $this->createMock(Constraint::class);
-        $constraint->expects($this->once())
+        $constraint->expects(static::once())
             ->method('evaluate')
             ->with($query, '', TRUE)
             ->willReturn($expected);
         $invocation = $this->createMock(BaseInvocation::class);
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method('getQuery')
             ->willReturn($query);
         $object = new QueryMatcher($constraint);
         $actual = $object->matches($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
             ['SELECT * FROM `t1`', TRUE],

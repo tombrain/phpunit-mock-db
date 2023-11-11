@@ -34,10 +34,10 @@ class MockTraitIntegrationTest extends Testcase
     public function testMatchAnyQueryAnyInvocationCount(string $query, array $expected): void
     {
         $this->createDatabaseMock()
-            ->expects($this->any())
+            ->expects(static::any())
             ->willReturnResultSet($expected);
         $actual = $this->db->query($query);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
     /**
@@ -48,10 +48,10 @@ class MockTraitIntegrationTest extends Testcase
     public function testMatchAnyQuerySingleInvocation(string $query, array $expected): void
     {
         $this->createDatabaseMock()
-            ->expects($this->once())
+            ->expects(static::once())
             ->willReturnResultSet($expected);
         $actual = $this->db->query($query);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
     /**
@@ -62,11 +62,11 @@ class MockTraitIntegrationTest extends Testcase
     public function testMatchAnyQueryAnyInvocationCountNoneInvoked($_, array $expected): void
     {
         $this->createDatabaseMock()
-            ->expects($this->any())
+            ->expects(static::any())
             ->willReturnResultSet($expected);
     }
 
-    public function provideMatchSingleSelectInvocation(): array
+    public static function provideMatchSingleSelectInvocation(): array
     {
         return [
             [
@@ -90,21 +90,21 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $mock = $this->createDatabaseMock();
-        $mock->expects($this->once())
+        $mock->expects(static::once())
             ->query($query1)
             ->willReturnResultSet($expected1);
-        $mock->expects($this->once())
+        $mock->expects(static::once())
             ->query($query2)
             ->willReturnResultSet($expected2);
 
         // Invoke in reverse order.
         $actual2 = $this->db->query($query2);
-        $this->assertSame($expected2, $actual2);
+        static::assertSame($expected2, $actual2);
         $actual1 = $this->db->query($query1);
-        $this->assertSame($expected1, $actual1);
+        static::assertSame($expected1, $actual1);
     }
 
-    public function provideMatchTwoSelectInvocations(): array
+    public static function provideMatchTwoSelectInvocations(): array
     {
         return [
             [
@@ -133,25 +133,25 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $mock = $this->createDatabaseMock();
-        $mock->expects($this->at(1))
+        $mock->expects(static::at(1))
             ->query($query2)
             ->willSetLastInsertId($expected2);
-        $mock->expects($this->at(2))
+        $mock->expects(static::at(2))
             ->query($query3)
             ->willSetLastInsertId($expected3);
-        $mock->expects($this->once())
+        $mock->expects(static::once())
             ->query($query1)
             ->willReturnResultSet($expected1);
 
         $actual1 = $this->db->query($query1);
-        $this->assertSame($expected1, $actual1);
+        static::assertSame($expected1, $actual1);
         $actual2 = $this->db->query($query2);
-        $this->assertSame($expected2, $actual2);
+        static::assertSame($expected2, $actual2);
         $actual3 = $this->db->query($query3);
-        $this->assertSame($expected3, $actual3);
+        static::assertSame($expected3, $actual3);
     }
 
-    public function provideMatchMixedQueriesWithQueryMatchersOnceEach(): array
+    public static function provideMatchMixedQueriesWithQueryMatchersOnceEach(): array
     {
         return [
             [
@@ -173,17 +173,17 @@ class MockTraitIntegrationTest extends Testcase
     public function testMatchWithQueryMatchersWithConsecutiveCalls(string $query, array $expecteds): void
     {
         $this->createDatabaseMock()
-            ->expects($this->exactly(count($expecteds)))
+            ->expects(static::exactly(count($expecteds)))
             ->query($query)
             ->willSetLastInsertId(...$expecteds);
 
         foreach ($expecteds as $expected) {
             $actual = $this->db->query($query);
-            $this->assertSame($expected, $actual);
+            static::assertSame($expected, $actual);
         }
     }
 
-    public function provideMatchWithQueryMatchersWithConsecutiveCalls(): array
+    public static function provideMatchWithQueryMatchersWithConsecutiveCalls(): array
     {
         return [
             [
@@ -206,17 +206,17 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $this->createDatabaseMock()
-            ->expects($this->exactly($expectTimes))
+            ->expects(static::exactly($expectTimes))
             ->query($query)
             ->willSetAffectedRows($expected);
 
         for ($i = 0; $i < $expectTimes; $i++) {
             $actual = $this->db->query($query);
-            $this->assertSame($expected, $actual);
+            static::assertSame($expected, $actual);
         }
     }
 
-    public function provideMatchWithQueryMatcherAssertAffectedRows(): array
+    public static function provideMatchWithQueryMatcherAssertAffectedRows(): array
     {
         return [
             [
@@ -240,18 +240,18 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $this->createDatabaseMock()
-            ->expects($this->once())
+            ->expects(static::once())
             ->query($constraint)
             ->willReturnResultSet($expected);
         $actual = $this->db->query($query);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatchQueryWithPHPUnitConstraint(): array
+    public static function provideMatchQueryWithPHPUnitConstraint(): array
     {
         return [
             [
-                $this->stringStartsWith('SELECT'),
+                static::stringStartsWith('SELECT'),
                 'SELECT * FROM `t`',
                 [['foo' => 'bar']],
             ],
@@ -273,7 +273,7 @@ class MockTraitIntegrationTest extends Testcase
     {
         $queue = $expecteds;
         $this->createDatabaseMock()
-            ->expects($this->atLeast(count($expecteds) + 1))
+            ->expects(static::atLeast(count($expecteds) + 1))
             ->query($query)
             ->onConsecutiveCalls()
             ->willSetLastInsertId(array_shift($queue))
@@ -282,10 +282,10 @@ class MockTraitIntegrationTest extends Testcase
             ->willSetLastInsertId(array_shift($queue));
 
         $actual0 = $this->db->query($query);
-        $this->assertSame($expecteds[0], $actual0);
+        static::assertSame($expecteds[0], $actual0);
 
         $actual1 = $this->db->query($query);
-        $this->assertSame($expecteds[1], $actual1);
+        static::assertSame($expecteds[1], $actual1);
 
         try {
             $this->db->query($query);
@@ -295,14 +295,14 @@ class MockTraitIntegrationTest extends Testcase
             if ($e instanceof FrameworkException) {
                 throw $e;
             }
-            $this->assertInstanceOf(get_class($exception), $e);
+            static::assertInstanceOf(get_class($exception), $e);
         }
 
         $actual2 = $this->db->query($query);
-        $this->assertSame($expecteds[2], $actual2);
+        static::assertSame($expecteds[2], $actual2);
     }
 
-    public function provideMatchWithQueryMatchersWithConsecutiveCallsBuilder(): array
+    public static function provideMatchWithQueryMatchersWithConsecutiveCallsBuilder(): array
     {
         return [
             [
@@ -327,19 +327,19 @@ class MockTraitIntegrationTest extends Testcase
     ): void
     {
         $this->createDatabaseMock()
-            ->expects($this->once())
+            ->expects(static::once())
             ->query($constraint)
             ->willInvokeCallback($callback);
 
         $actual = $this->db->query($query);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatchWithQueryMatchersWithCustomCallbackHandlers(): array
+    public static function provideMatchWithQueryMatchersWithCustomCallbackHandlers(): array
     {
         return [
             [
-                $this->stringStartsWith('INSERT'),
+                static::stringStartsWith('INSERT'),
                 function (Invocation $invocation) {
                     $invocation->setLastInsertId(1);
                 },
@@ -347,7 +347,7 @@ class MockTraitIntegrationTest extends Testcase
                 1,
             ],
             [
-                $this->stringStartsWith('UPDATE'),
+                static::stringStartsWith('UPDATE'),
                 function (Invocation $invocation) {
                     $invocation->setAffectedRows(0);
                 },
@@ -355,7 +355,7 @@ class MockTraitIntegrationTest extends Testcase
                 0,
             ],
             [
-                $this->stringStartsWith('SELECT'),
+                static::stringStartsWith('SELECT'),
                 function (Invocation $invocation) {
                     $invocation->setResultSet([['name' => 'foo']]);
                 },

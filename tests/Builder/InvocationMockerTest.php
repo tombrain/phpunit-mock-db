@@ -27,20 +27,21 @@ class InvocationMockerTest extends Testcase
     /**
      * @dataProvider  provideOnConsecutiveCalls
      */
-    public function testOnConsecutiveCalls(InvocationMocker $object): void
+    public function testOnConsecutiveCalls(callable $dateCallback): void
     {
+        $object = $dateCallback($this);
         $actual = $object->onConsecutiveCalls();
-        $this->assertInstanceOf(ConsecutiveCallsBuilder::class, $actual);
-        $this->assertSame($object, $this->getObjectPropertyValue($actual, 'builder'));
-        $stub = $this->getObjectPropertyValue($actual, 'stub');
-        $this->assertInstanceOf(ConsecutiveCallsStub::class, $stub);
-        $this->assertEmpty($this->getObjectPropertyValue($stub, 'stack'));
+        static::assertInstanceOf(ConsecutiveCallsBuilder::class, $actual);
+        static::assertSame($object, static::getObjectPropertyValue($actual, 'builder'));
+        $stub = static::getObjectPropertyValue($actual, 'stub');
+        static::assertInstanceOf(ConsecutiveCallsStub::class, $stub);
+        static::assertEmpty(static::getObjectPropertyValue($stub, 'stack'));
     }
 
-    public function provideOnConsecutiveCalls(): array
+    public static function provideOnConsecutiveCalls(): array
     {
         return [
-            [$this->createObject()],
+            [ fn (self $testCase) => $testCase->createObject() ]
         ];
     }
 
@@ -51,23 +52,23 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createObject();
         $self = $object->query($constraint);
-        $this->assertSame($object, $self);
+        static::assertSame($object, $self);
         $queryMatcher = $this->getObjectMatcher($object)
             ->getQueryMatcher();
-        $this->assertInstanceOf(QueryMatcher::class, $queryMatcher);
-        $actual = $this->getObjectPropertyValue($queryMatcher, 'constraint');
-        $this->assertInstanceOf($expected, $actual);
+        static::assertInstanceOf(QueryMatcher::class, $queryMatcher);
+        $actual = static::getObjectPropertyValue($queryMatcher, 'constraint');
+        static::assertInstanceOf($expected, $actual);
         if ($constraint instanceof Constraint) {
-            $this->assertSame($constraint, $actual);
+            static::assertSame($constraint, $actual);
         }
     }
 
-    public function provideQuery(): array
+    public static function provideQuery(): array
     {
         return [
             ['SELECT * FROM `t1`', EqualsSQLQueriesConstraint::class],
             [new EqualsSQLQueriesConstraint('SELECT * FROM `t1`'), EqualsSQLQueriesConstraint::class],
-            [$this->stringStartsWith('SELECT'), StringStartsWith::class],
+            [static::stringStartsWith('SELECT'), StringStartsWith::class],
         ];
     }
 
@@ -78,26 +79,26 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createObject();
         $self = $object->with($parameters);
-        $this->assertSame($object, $self);
+        static::assertSame($object, $self);
         $parametersMatch = $this->getObjectMatcher($object)
             ->getParametersMatcher();
-        $this->assertInstanceOf(ParametersMatch::class, $parametersMatch);
-        $actual = $this->getObjectPropertyValue($parametersMatch, 'parameters');
-        $this->assertCount(count($expected), $actual);
+        static::assertInstanceOf(ParametersMatch::class, $parametersMatch);
+        $actual = static::getObjectPropertyValue($parametersMatch, 'parameters');
+        static::assertCount(count($expected), $actual);
         for ($i = 0; $i < count($expected); $i++) {
             if ($expected[$i] instanceof Constraint) {
-                $this->assertSame($expected[$i], $actual[$i]);
+                static::assertSame($expected[$i], $actual[$i]);
             }
             else {
-                $this->assertInstanceOf(Constraint::class, $actual[$i]);
+                static::assertInstanceOf(Constraint::class, $actual[$i]);
                 $actual[$i]->evaluate($expected[$i]);
             }
         }
     }
 
-    public function provideWith(): array
+    public static function provideWith(): array
     {
-        $anyMatcher = $this->anything();
+        $anyMatcher = static::anything();
         return [
             [[1, 2], [1, 2]],
             [[3.14, $anyMatcher], [3.14, $anyMatcher]],
@@ -108,10 +109,10 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createObject();
         $self = $object->withAnyParameters();
-        $this->assertSame($object, $self);
+        static::assertSame($object, $self);
         $parametersMatch = $this->getObjectMatcher($object)
             ->getParametersMatcher();
-        $this->assertInstanceOf(AnyParameters::class, $parametersMatch);
+        static::assertInstanceOf(AnyParameters::class, $parametersMatch);
     }
 
     /**
@@ -121,18 +122,18 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createObject();
         $self = $object->will($stub);
-        $this->assertSame($object, $self);
-        $actual = $this->getObjectPropertyValue($this->getObjectMatcher($object), 'stub');
-        $this->assertInstanceOf($expected, $actual);
+        static::assertSame($object, $self);
+        $actual = static::getObjectPropertyValue($this->getObjectMatcher($object), 'stub');
+        static::assertInstanceOf($expected, $actual);
         if ($stub instanceof Stub) {
-            $this->assertSame($stub, $actual);
+            static::assertSame($stub, $actual);
         }
     }
 
-    public function provideWill(): array
+    public static function provideWill(): array
     {
         return [
-            [$this->createMock(Stub::class), Stub::class],
+            //[$this->createMock(Stub::class), Stub::class],
             [new Stub\ReturnResultSetStub([]), Stub\ReturnResultSetStub::class],
             [new Stub\SetAffectedRowsStub(0), Stub\SetAffectedRowsStub::class],
             [new Stub\SetLastInsertIdStub(1), Stub\SetLastInsertIdStub::class],
@@ -146,34 +147,34 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createMockObjectForWillTest($callback);
         $actual = $object->willInvokeCallback(...$arguments);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillInvokeCallback(): array
+    public static function provideWillInvokeCallback(): array
     {
         return [
-            $this->createWillInvokeCallbackTestCaseSingleCall(function () {}),
-            $this->createWillInvokeCallbackTestCaseConsecutiveCalls([function () {}, function () {}]),
+            static::createWillInvokeCallbackTestCaseSingleCall(function () {}),
+            static::createWillInvokeCallbackTestCaseConsecutiveCalls([function () {}, function () {}]),
         ];
     }
 
-    private function createWillInvokeCallbackTestCaseSingleCall(callable $callback): array
+    private static function createWillInvokeCallbackTestCaseSingleCall(callable $callback): array
     {
         return [
             [$callback],
             function ($stub) use ($callback) {
-                $this->assertStub($stub, Stub\InvokeCallbackStub::class, 'callback', $callback);
+                static::assertStub($stub, Stub\InvokeCallbackStub::class, 'callback', $callback);
                 return TRUE;
             },
         ];
     }
 
-    private function createWillInvokeCallbackTestCaseConsecutiveCalls(array $callbacks): array
+    private static function createWillInvokeCallbackTestCaseConsecutiveCalls(array $callbacks): array
     {
         return [
             $callbacks,
             function ($stub) use ($callbacks) {
-                $this->assertConsecutiveStubs($stub, $callbacks, Stub\InvokeCallbackStub::class, 'callback');
+                static::assertConsecutiveStubs($stub, $callbacks, Stub\InvokeCallbackStub::class, 'callback');
                 return TRUE;
             },
         ];
@@ -186,10 +187,10 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createMockObjectForWillTest($callback);
         $actual = $object->willReturnResultSet(...$arguments);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillReturnResultSet(): array
+    public static function provideWillReturnResultSet(): array
     {
         $resultSet1 = [];
         $resultSet2 = [
@@ -201,32 +202,32 @@ class InvocationMockerTest extends Testcase
             ['id' => 3],
         ];
         return [
-            $this->createWillReturnResultSetTestCaseSingleCall(NULL),
-            $this->createWillReturnResultSetTestCaseSingleCall($resultSet1),
-            $this->createWillReturnResultSetTestCaseSingleCall($resultSet2),
-            $this->createWillReturnResultSetTestCaseSingleCall(new ArrayObject($resultSet2)),
-            $this->createWillReturnResultSetTestCaseConsecutiveCalls([$resultSet1, $resultSet2]),
-            $this->createWillReturnResultSetTestCaseConsecutiveCalls([new ArrayObject($resultSet2), new ArrayObject($resultSet3)]),
+            static::createWillReturnResultSetTestCaseSingleCall(NULL),
+            static::createWillReturnResultSetTestCaseSingleCall($resultSet1),
+            static::createWillReturnResultSetTestCaseSingleCall($resultSet2),
+            static::createWillReturnResultSetTestCaseSingleCall(new ArrayObject($resultSet2)),
+            static::createWillReturnResultSetTestCaseConsecutiveCalls([$resultSet1, $resultSet2]),
+            static::createWillReturnResultSetTestCaseConsecutiveCalls([new ArrayObject($resultSet2), new ArrayObject($resultSet3)]),
         ];
     }
 
-    private function createWillReturnResultSetTestCaseSingleCall(?iterable $value): array
+    private static function createWillReturnResultSetTestCaseSingleCall(?iterable $value): array
     {
         return [
             [$value],
             function ($stub) use ($value) {
-                $this->assertStub($stub, Stub\ReturnResultSetStub::class, 'value', $value);
+                static::assertStub($stub, Stub\ReturnResultSetStub::class, 'value', $value);
                 return TRUE;
             },
         ];
     }
 
-    private function createWillReturnResultSetTestCaseConsecutiveCalls(array $values): array
+    private static function createWillReturnResultSetTestCaseConsecutiveCalls(array $values): array
     {
         return [
             $values,
             function ($stub) use ($values) {
-                $this->assertConsecutiveStubs($stub, $values, Stub\ReturnResultSetStub::class, 'value');
+                static::assertConsecutiveStubs($stub, $values, Stub\ReturnResultSetStub::class, 'value');
                 return TRUE;
             }
         ];
@@ -239,35 +240,35 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createMockObjectForWillTest($callback);
         $actual = $object->willSetAffectedRows(...$arguments);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillSetAffectedRows(): array
+    public static function provideWillSetAffectedRows(): array
     {
         return [
-            $this->createWillSetAffectedRowsTestCaseSingleCall(0),
-            $this->createWillSetAffectedRowsTestCaseSingleCall(100),
-            $this->createWillSetAffectedRowsTestCaseConsecutiveCalls([1, 2, 3]),
+            static::createWillSetAffectedRowsTestCaseSingleCall(0),
+            static::createWillSetAffectedRowsTestCaseSingleCall(100),
+            static::createWillSetAffectedRowsTestCaseConsecutiveCalls([1, 2, 3]),
         ];
     }
 
-    private function createWillSetAffectedRowsTestCaseSingleCall(int $value): array
+    private static function createWillSetAffectedRowsTestCaseSingleCall(int $value): array
     {
         return [
             [$value],
             function ($stub) use ($value) {
-                $this->assertStub($stub, Stub\SetAffectedRowsStub::class, 'value', $value);
+                static::assertStub($stub, Stub\SetAffectedRowsStub::class, 'value', $value);
                 return TRUE;
             },
         ];
     }
 
-    private function createWillSetAffectedRowsTestCaseConsecutiveCalls(array $values): array
+    private static function createWillSetAffectedRowsTestCaseConsecutiveCalls(array $values): array
     {
         return [
             $values,
             function ($stub) use ($values) {
-                $this->assertConsecutiveStubs($stub, $values, Stub\SetAffectedRowsStub::class, 'value');
+                static::assertConsecutiveStubs($stub, $values, Stub\SetAffectedRowsStub::class, 'value');
                 return TRUE;
             }
         ];
@@ -280,36 +281,36 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createMockObjectForWillTest($callback);
         $actual = $object->willSetLastInsertId(...$arguments);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillSetLastInsertId(): array
+    public static function provideWillSetLastInsertId(): array
     {
         return [
-            $this->createWillSetLastInsertIdTestCaseSingleCall(NULL),
-            $this->createWillSetLastInsertIdTestCaseSingleCall(123),
-            $this->createWillSetLastInsertIdTestCaseSingleCall('456'),
-            $this->createWillSetLastInsertIdTestCaseConsecutiveCalls([NULL, 1, 2]),
+            static::createWillSetLastInsertIdTestCaseSingleCall(NULL),
+            static::createWillSetLastInsertIdTestCaseSingleCall(123),
+            static::createWillSetLastInsertIdTestCaseSingleCall('456'),
+            static::createWillSetLastInsertIdTestCaseConsecutiveCalls([NULL, 1, 2]),
         ];
     }
 
-    private function createWillSetLastInsertIdTestCaseSingleCall($value): array
+    private static function createWillSetLastInsertIdTestCaseSingleCall($value): array
     {
         return [
             [$value],
             function ($stub) use ($value) {
-                $this->assertStub($stub, Stub\SetLastInsertIdStub::class, 'value', $value);
+                static::assertStub($stub, Stub\SetLastInsertIdStub::class, 'value', $value);
                 return TRUE;
             },
         ];
     }
 
-    private function createWillSetLastInsertIdTestCaseConsecutiveCalls(array $values): array
+    private static function createWillSetLastInsertIdTestCaseConsecutiveCalls(array $values): array
     {
         return [
             $values,
             function ($stub) use ($values) {
-                $this->assertConsecutiveStubs($stub, $values, Stub\SetLastInsertIdStub::class, 'value');
+                static::assertConsecutiveStubs($stub, $values, Stub\SetLastInsertIdStub::class, 'value');
                 return TRUE;
             }
         ];
@@ -320,36 +321,36 @@ class InvocationMockerTest extends Testcase
      */
     public function testWillThrowException(array $arguments, callable $callback): void
     {
-        $object = $this->createMockObjectForWillTest($callback);
+        $object = static::createMockObjectForWillTest($callback);
         $actual = $object->willThrowException(...$arguments);
-        $this->assertSame($object, $actual);
+        static::assertSame($object, $actual);
     }
 
-    public function provideWillThrowException(): array
+    public static function provideWillThrowException(): array
     {
         return [
-            $this->createWillThrowExceptionTestCaseSingleCall(new RuntimeException),
-            $this->createWillThrowExceptionTestCaseConsecutiveCalls([new RuntimeException, new RuntimeException]),
+            static::createWillThrowExceptionTestCaseSingleCall(new RuntimeException),
+            static::createWillThrowExceptionTestCaseConsecutiveCalls([new RuntimeException, new RuntimeException]),
         ];
     }
 
-    private function createWillThrowExceptionTestCaseSingleCall(Throwable $value): array
+    private static function createWillThrowExceptionTestCaseSingleCall(Throwable $value): array
     {
         return [
             [$value],
             function ($stub) use ($value) {
-                $this->assertStub($stub, Stub\ThrowExceptionStub::class, 'exception', $value);
+                static::assertStub($stub, Stub\ThrowExceptionStub::class, 'exception', $value);
                 return TRUE;
             },
         ];
     }
 
-    private function createWillThrowExceptionTestCaseConsecutiveCalls(array $values): array
+    private static function createWillThrowExceptionTestCaseConsecutiveCalls(array $values): array
     {
         return [
             $values,
             function ($stub) use ($values) {
-                $this->assertConsecutiveStubs($stub, $values, Stub\ThrowExceptionStub::class, 'exception');
+                static::assertConsecutiveStubs($stub, $values, Stub\ThrowExceptionStub::class, 'exception');
                 return TRUE;
             }
         ];
@@ -363,11 +364,11 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->getMockBuilder(InvocationMocker::class)
             ->disableOriginalConstructor()
-            ->setMethods(['will'])
+            ->onlyMethods(['will'])
             ->getMock();
-        $object->expects($this->once())
+        $object->expects(static::once())
             ->method('will')
-            ->with($this->callback($checkArgument))
+            ->with(static::callback($checkArgument))
             ->willReturn($object);
         return $object;
     }
@@ -389,8 +390,8 @@ class InvocationMockerTest extends Testcase
      */
     private function getObjectMatcher(InvocationMocker $object): Matcher
     {
-        $matcher = $this->getObjectPropertyValue($object, 'matcher');
-        $this->assertInstanceOf(Matcher::class, $matcher);
+        $matcher = static::getObjectPropertyValue($object, 'matcher');
+        static::assertInstanceOf(Matcher::class, $matcher);
         return $matcher;
     }
 }

@@ -18,23 +18,26 @@ class MatcherInvocationWrapperTest extends Testcase
     /**
      * @dataProvider  provideInvoked
      */
-    public function testInvoked(BaseInvocation $baseInvocation, MockObjectInvocation $wrappedInvocation): void
+    public function testInvoked(callable $baseInvocationCallable, callable $wrappedInvocationCallable): void
     {
+        $baseInvocation = $baseInvocationCallable($this);
+        $wrappedInvocation = $wrappedInvocationCallable($this);
+
         $invocation = $this->createInvocationOrder();
         $object = $this->createObject(
             $invocation,
             $this->createContainer($baseInvocation, $wrappedInvocation)
         );
         $object->invoked($baseInvocation);
-        $this->assertSame(1, $invocation->getInvocationCount());
+        static::assertSame(1, $invocation->getInvocationCount());
     }
 
-    public function provideInvoked(): array
+    public static function provideInvoked(): array
     {
         return [
             [
-                $this->createMock(BaseInvocation::class),
-                $this->createMockObjectInvocation(),
+                fn (self $testCase) => $testCase->createMock(BaseInvocation::class),
+                fn (self $testCase) => $testCase->createMockObjectInvocation(),
             ],
         ];
     }
@@ -42,10 +45,13 @@ class MatcherInvocationWrapperTest extends Testcase
     /**
      * @dataProvider  provideMatches
      */
-    public function testMatches(BaseInvocation $baseInvocation, MockObjectInvocation $wrappedInvocation, bool $expected): void
+    public function testMatches(callable $baseInvocationCallable, callable $wrappedInvocationCallable, bool $expected): void
     {
+        $baseInvocation = $baseInvocationCallable($this);
+        $wrappedInvocation = $wrappedInvocationCallable($this);
+
         $invocation = $this->createInvocationOrder();
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method('matches')
             ->with($wrappedInvocation)
             ->willReturn($expected);
@@ -54,20 +60,20 @@ class MatcherInvocationWrapperTest extends Testcase
             $this->createContainer($baseInvocation, $wrappedInvocation)
         );
         $actual = $object->matches($baseInvocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
             [
-                $this->createMock(BaseInvocation::class),
-                $this->createMockObjectInvocation(),
+                fn (self $testCase) => $testCase->createMock(BaseInvocation::class),
+                fn (self $testCase) => $testCase->createMockObjectInvocation(),
                 TRUE,
             ],
             [
-                $this->createMock(BaseInvocation::class),
-                $this->createMockObjectInvocation(),
+                fn (self $testCase) => $testCase->createMock(BaseInvocation::class),
+                fn (self $testCase) => $testCase->createMockObjectInvocation(),
                 FALSE,
             ],
         ];
@@ -79,7 +85,7 @@ class MatcherInvocationWrapperTest extends Testcase
     public function testVerify(): void
     {
         $invocation = $this->createInvocationOrder();
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method('verify');
         $object = $this->createObject($invocation);
         $object->verify();
@@ -88,34 +94,35 @@ class MatcherInvocationWrapperTest extends Testcase
     /**
      * @dataProvider  provideIsAnyInvokedCount
      */
-    public function testIsAnyInvokedCount(InvocationOrder $invocation, bool $expected): void
+    public function testIsAnyInvokedCount(callable $invocationCallable, bool $expected): void
     {
+        $invocation = $invocationCallable($this);
         $object = $this->createObject($invocation);
         $actual = $object->isAnyInvokedCount();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideIsAnyInvokedCount(): array
+    public static function provideIsAnyInvokedCount(): array
     {
         return [
             [
-                $this->createMock(InvocationOrder::class),
+                fn (self $testCase) => $testCase->createMock(InvocationOrder::class),
                 FALSE,
             ],
             [
-                $this->once(),
+                fn (self $testCase) => static::once(),
                 FALSE,
             ],
             [
-                $this->at(0),
+                static::at(0),
                 FALSE,
             ],
             [
-                $this->never(),
+                fn (self $testCase) => static::never(),
                 FALSE,
             ],
             [
-                $this->any(),
+                fn (self $testCase) => static::any(),
                 TRUE,
             ],
         ];
@@ -124,38 +131,39 @@ class MatcherInvocationWrapperTest extends Testcase
     /**
      * @dataProvider  provideIsNeverInvokedCount
      */
-    public function testIsNeverInvokedCount(InvocationOrder $invocation, bool $expected): void
+    public function testIsNeverInvokedCount(callable $invocationCallable, bool $expected): void
     {
+        $invocation = $invocationCallable($this);
         $object = $this->createObject($invocation);
         $actual = $object->isNeverInvokedCount();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideIsNeverInvokedCount(): array
+    public static function provideIsNeverInvokedCount(): array
     {
         return [
             [
-                $this->createMock(InvocationOrder::class),
+                fn (self $testCase) => $testCase->createMock(InvocationOrder::class),
                 FALSE,
             ],
             [
-                $this->once(),
+                fn (self $testCase) => static::once(),
+                FALSE,
+            ],
+            // [
+            //     static::at(0),
+            //     FALSE,
+            // ],
+            [
+                fn (self $testCase) => static::any(),
                 FALSE,
             ],
             [
-                $this->at(0),
-                FALSE,
-            ],
-            [
-                $this->any(),
-                FALSE,
-            ],
-            [
-                $this->never(),
+                fn (self $testCase) => static::never(),
                 TRUE,
             ],
             [
-                $this->exactly(0),
+                fn (self $testCase) => static::exactly(0),
                 TRUE,
             ],
         ];
@@ -167,7 +175,7 @@ class MatcherInvocationWrapperTest extends Testcase
     ): InvocationsContainer
     {
         $object = $this->createMock(InvocationsContainer::class);
-        $object->expects($this->once())
+        $object->expects(static::once())
             ->method('getMockObjectInvocation')
             ->with($baseInvocation)
             ->willReturn($wrappedInvocation);
