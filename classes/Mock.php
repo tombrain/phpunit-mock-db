@@ -10,6 +10,7 @@ use Cz\PHPUnit\MockDB\Builder\InvocationMocker as InvocationMockerBuilder,
     LogicException,
     PHPUnit\Framework\MockObject\Rule\InvocationOrder,
     PHPUnit\Framework\InvalidArgumentException;
+use PHPUnit\Framework\UnknownClassOrInterfaceException;
 
 /**
  * Mock
@@ -39,10 +40,7 @@ class Mock
             $matcher = new MatcherInvocationWrapper($matcher, $this->getInvocationsContainer());
         }
         if ( ! $matcher instanceof MatcherInvocation) {
-            throw InvalidArgumentException::create(
-                1,
-                sprintf('object implementing interface %s\Matcher\Invocation', __NAMESPACE__)
-            );
+             throw new ImplementationException();
         }
         return $this->getInvocationMocker()
             ->expects($matcher);

@@ -179,26 +179,6 @@ class MockIntegrationTest extends Testcase
                 FALSE,
             ],
             /**
-             * $mock->expects(static::at(2))
-             *     ->willReturnResultSet($resultSet1);
-             * $mock->invoke('SELECT * FROM `t1`');
-             */
-            'Match any query only at 2nd invocation' => [
-                [
-                    [
-                        'expects' => static::at(2),
-                        'will' => new Stub\ReturnResultSetStub($resultSet1),
-                    ],
-                ],
-                [
-                    [
-                        'invoke' => ['SELECT * FROM `t1`'],
-                        'expected' => static::createExpectationFailedException(),
-                    ],
-                ],
-                FALSE,
-            ],
-            /**
              * $mock->expects(static::once())
              *     ->query('SELECT * FROM `t2`')
              *     ->willReturnResultSet($resultSet2);

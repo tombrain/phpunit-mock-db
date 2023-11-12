@@ -120,25 +120,20 @@ class MockTraitIntegrationTest extends Testcase
      * Expect two queries producing insert IDs executed as 2nd and 3rd queries, and also
      * a query producing a result set executed once at any position. Invoke select query,
      * then both insert queries in the correct order.
-     * 
-     * @dataProvider  provideMatchMixedQueriesWithQueryMatchersOnceEach
      */
-    public function testMatchMixedQueriesWithQueryMatchersOnceEach(
-        string $query1,
-        array $expected1,
-        string $query2,
-        int $expected2,
-        string $query3,
-        int $expected3
-    ): void
+    public function testMatchMixedQueriesWithQueryMatchersOnceEach(): void
     {
+        $query1 = 'SELECT * FROM `t1`';
+        $expected1 = [['foo' => 'bar']];
+        $query2 = 'INSERT INTO `t1` VALUES (1, 2, 3)';
+        $expected2 = 1;
+        $query3 = 'INSERT INTO `t1` VALUES (1, 2, 3)';
+        $expected3 = 2;
+
         $mock = $this->createDatabaseMock();
-        $mock->expects(static::at_hidingDeprecatedWarning(1))
-            ->query($query2)
-            ->willSetLastInsertId($expected2);
-        $mock->expects(static::at_hidingDeprecatedWarning(2))
+        $mock->expects(static::exactly(2))
             ->query($query3)
-            ->willSetLastInsertId($expected3);
+            ->willSetLastInsertId(...[$expected2, $expected3]);
         $mock->expects(static::once())
             ->query($query1)
             ->willReturnResultSet($expected1);
@@ -149,20 +144,6 @@ class MockTraitIntegrationTest extends Testcase
         static::assertSame($expected2, $actual2);
         $actual3 = $this->db->query($query3);
         static::assertSame($expected3, $actual3);
-    }
-
-    public static function provideMatchMixedQueriesWithQueryMatchersOnceEach(): array
-    {
-        return [
-            [
-                'SELECT * FROM `t1`',
-                [['foo' => 'bar']],
-                'INSERT INTO `t1` VALUES (1, 2, 3)',
-                1,
-                'INSERT INTO `t1` VALUES (1, 2, 3)',
-                2,
-            ],
-        ];
     }
 
     /**

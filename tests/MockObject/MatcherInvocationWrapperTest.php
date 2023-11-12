@@ -29,7 +29,7 @@ class MatcherInvocationWrapperTest extends Testcase
             $this->createContainer($baseInvocation, $wrappedInvocation)
         );
         $object->invoked($baseInvocation);
-        static::assertSame(1, $invocation->getInvocationCount());
+        static::assertSame(1, $invocation->numberOfInvocations());
     }
 
     public static function provideInvoked(): array
@@ -114,10 +114,6 @@ class MatcherInvocationWrapperTest extends Testcase
                 FALSE,
             ],
             [
-                fn (self $testCase) => static::at_hidingDeprecatedWarning(0),
-                FALSE,
-            ],
-            [
                 fn (self $testCase) => static::never(),
                 FALSE,
             ],
@@ -148,10 +144,6 @@ class MatcherInvocationWrapperTest extends Testcase
             ],
             [
                 fn (self $testCase) => static::once(),
-                FALSE,
-            ],
-            [
-                fn (self $testCase) => static::at_hidingDeprecatedWarning(0),
                 FALSE,
             ],
             [

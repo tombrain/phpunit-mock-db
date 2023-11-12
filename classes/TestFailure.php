@@ -4,6 +4,8 @@ namespace Cz\PHPUnit\MockDB;
 
 use PHPUnit\Framework\TestFailure as FrameworkTestFailure,
     Throwable;
+use PHPUnit\Runner\Version;
+use PHPUnit\Util\ThrowableToStringMapper;
 
 /**
  * TestFailure
@@ -19,7 +21,8 @@ class TestFailure
      */
     public static function exceptionToString(Throwable $error): string
     {
-        $message = FrameworkTestFailure::exceptionToString($error);
+        $message = ThrowableToStringMapper::map($error);
+        
         return preg_replace('#^Method#', 'Database', $message);
     }
 }
