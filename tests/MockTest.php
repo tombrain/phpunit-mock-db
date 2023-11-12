@@ -23,8 +23,10 @@ class MockTest extends Testcase
     /**
      * @dataProvider  provideExpects
      */
-    public function testExpects($argument, $expected): void
+    public function testExpects(callable $callable): void
     {
+        list($argument, $expected) = $callable($this);
+
         // Using test double classes to avoid having to mock methods named 'expects'.
         $invocationMocker = new Doubles\InvocationMockerDouble;
         $container = new InvocationsContainer;
@@ -33,47 +35,47 @@ class MockTest extends Testcase
         $this->expectExceptionFromArgument($expected);
         $builder = $object->expects($argument);
 
-        $this->assertInstanceOf(InvocationMockerBuilder::class, $builder);
+        static::assertInstanceOf(InvocationMockerBuilder::class, $builder);
         $actual = $invocationMocker->matcher;
         if (is_callable($expected)) {
             call_user_func($expected, $actual, $container);
         }
         else {
-            $this->assertSame($expected, $actual);
+            static::assertSame($expected, $actual);
         }
     }
 
-    public function provideExpects(): array
+    public static function provideExpects(): array
     {
         return [
-            $this->createExpectsTestCaseException(NULL),
-            $this->createExpectsTestCaseException(3.14),
-            $this->createExpectsTestCaseException('foo'),
-            $this->createExpectsTestCaseMockDbInvocationMatcher($this->createMock(RecordedInvocation::class)),
-            $this->createExpectsTestCaseWrappedInvocationMatcher($this->any()),
-            $this->createExpectsTestCaseWrappedInvocationMatcher($this->once()),
-            $this->createExpectsTestCaseWrappedInvocationMatcher($this->never()),
+            [ fn (self $testCase) => static::createExpectsTestCaseException(NULL) ],
+            [ fn (self $testCase) => static::createExpectsTestCaseException(3.14) ],
+            [ fn (self $testCase) => static::createExpectsTestCaseException('foo') ],
+            [ fn (self $testCase) => static::createExpectsTestCaseMockDbInvocationMatcher($testCase->createMock(RecordedInvocation::class)) ],
+            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::any()) ],
+            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::once()) ],
+            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::never()) ],
         ];
     }
 
-    private function createExpectsTestCaseException($value): array
+    private static function createExpectsTestCaseException($value): array
     {
         return [$value, new FrameworkException];
     }
 
-    private function createExpectsTestCaseMockDbInvocationMatcher(MatcherInvocation $matcher): array
+    private static function createExpectsTestCaseMockDbInvocationMatcher(MatcherInvocation $matcher): array
     {
         return [$matcher, $matcher];
     }
 
-    private function createExpectsTestCaseWrappedInvocationMatcher(InvocationOrder $matcher): array
+    private static function createExpectsTestCaseWrappedInvocationMatcher(InvocationOrder $matcher): array
     {
         return [
             $matcher,
             function ($actual, $container) use ($matcher) {
-                $this->assertInstanceOf(MatcherInvocationWrapper::class, $actual);
-                $this->assertSame($container, $this->getObjectPropertyValue($actual, 'container'));
-                $this->assertSame($matcher, $this->getObjectPropertyValue($actual, 'invocation'));
+                static::assertInstanceOf(MatcherInvocationWrapper::class, $actual);
+                static::assertSame($container, static::getObjectPropertyValue($actual, 'container'));
+                static::assertSame($matcher, static::getObjectPropertyValue($actual, 'invocation'));
             }
         ];
     }
@@ -89,44 +91,44 @@ class MockTest extends Testcase
 
         $this->expectExceptionFromArgument($expected);
         $actual = $object->invoke(...$arguments);
-        $this->assertSame($invocationMocker->invoked, $actual);
+        static::assertSame($invocationMocker->invoked, $actual);
         if (is_callable($expected)) {
             call_user_func($expected, $actual);
         }
         else {
-            $this->assertSame($expected, $actual);
+            static::assertSame($expected, $actual);
         }
     }
 
-    public function provideInvoke(): array
+    public static function provideInvoke(): array
     {
         return [
-            $this->createInvokeTestCaseString('SELECT * FROM `t`', []),
-            $this->createInvokeTestCaseString('SELECT * FROM `t` WHERE `c` = ?', [1]),
-            $this->createInvokeTestCaseInvocationInstance('SELECT * FROM `t`'),
-            $this->createInvokeTestCaseInvocationInstanceAnd2ndArgument('SELECT * FROM `t`', []),
+            static::createInvokeTestCaseString('SELECT * FROM `t`', []),
+            static::createInvokeTestCaseString('SELECT * FROM `t` WHERE `c` = ?', [1]),
+            static::createInvokeTestCaseInvocationInstance('SELECT * FROM `t`'),
+            static::createInvokeTestCaseInvocationInstanceAnd2ndArgument('SELECT * FROM `t`', []),
         ];
     }
 
-    private function createInvokeTestCaseString(string $query, array $parameters): array
+    private static function createInvokeTestCaseString(string $query, array $parameters): array
     {
         return [
             [$query, $parameters],
             function ($actual) use ($query, $parameters) {
-                $this->assertInstanceOf(QueryInvocation::class, $actual);
-                $this->assertSame($query, $actual->getQuery());
-                $this->assertSame($parameters, $actual->getParameters());
+                static::assertInstanceOf(QueryInvocation::class, $actual);
+                static::assertSame($query, $actual->getQuery());
+                static::assertSame($parameters, $actual->getParameters());
             }
         ];
     }
 
-    private function createInvokeTestCaseInvocationInstance(string $query): array
+    private static function createInvokeTestCaseInvocationInstance(string $query): array
     {
         $invocation = new QueryInvocation($query);
         return [[$invocation], $invocation];
     }
 
-    private function createInvokeTestCaseInvocationInstanceAnd2ndArgument(string $query, array $parameters): array
+    private static function createInvokeTestCaseInvocationInstanceAnd2ndArgument(string $query, array $parameters): array
     {
         return [
             [new QueryInvocation($query), $parameters],
@@ -144,23 +146,23 @@ class MockTest extends Testcase
         $object = new Doubles\MockDouble($invocationMocker);
 
         $actual = $object->getRequireMatch();
-        $this->assertSame($value, $actual);
+        static::assertSame($value, $actual);
     }
 
     /**
      * @dataProvider  provideRequireMatch
      */
-    public function testSetRequireMatch(bool $value): void
+    public static function testSetRequireMatch(bool $value): void
     {
         $invocationMocker = new Doubles\InvocationMockerDouble;
         $object = new Doubles\MockDouble($invocationMocker);
 
         $actual = $object->setRequireMatch($value);
-        $this->assertSame($object, $actual);
-        $this->assertSame($value, $invocationMocker->getRequireMatch());
+        static::assertSame($object, $actual);
+        static::assertSame($value, $invocationMocker->getRequireMatch());
     }
 
-    public function provideRequireMatch(): array
+    public static function provideRequireMatch(): array
     {
         return [
             [TRUE],

@@ -26,28 +26,29 @@ class MatcherTest extends Testcase
     /**
      * @dataProvider  provideHasMatchers
      */
-    public function testHasMatchers(RecordedInvocation $invocationMatcher, bool $expected): void
+    public function testHasMatchers(callable $callable, bool $expected): void
     {
+        $invocationMatcher = $callable($this);
         $object = new Matcher($invocationMatcher);
         $actual = $object->hasMatchers();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideHasMatchers(): array
+    public static function provideHasMatchers(): array
     {
         return [
-            [$this->createMatcherInvocationMock(FALSE), TRUE],
-            [$this->createMatcherInvocationMock(TRUE), FALSE],
-            [$this->createMatcherInvocationWrapper($this->any()), FALSE],
-            [$this->createMatcherInvocationWrapper($this->once()), TRUE],
-            [$this->createMatcherInvocationWrapper($this->never()), TRUE],
+            [fn (self $testCase) => $testCase->createMatcherInvocationMock(FALSE), TRUE],
+            [fn (self $testCase) => $testCase->createMatcherInvocationMock(TRUE), FALSE],
+            [fn (self $testCase) => $testCase->createMatcherInvocationWrapper(static::any()), FALSE],
+            [fn (self $testCase) => $testCase->createMatcherInvocationWrapper(static::once()), TRUE],
+            [fn (self $testCase) => $testCase->createMatcherInvocationWrapper(static::never()), TRUE],
         ];
     }
 
     private function createMatcherInvocationMock(bool $isAnyInvokedCount): RecordedInvocation
     {
         $mock = $this->createMock(RecordedInvocation::class);
-        $mock->expects($this->once())
+        $mock->expects(static::once())
             ->method('isAnyInvokedCount')
             ->willReturn($isAnyInvokedCount);
         return $mock;
@@ -61,55 +62,58 @@ class MatcherTest extends Testcase
     /**
      * @dataProvider  provideQueryMatcher
      */
-    public function testQueryMatcher(Constraint $constraint): void
+    public function testQueryMatcher(callable $callable): void
     {
+        $constraint = $callable($this);
         $object = new Matcher($this->createMock(RecordedInvocation::class));
-        $this->assertFalse($object->hasQueryMatcher());
+        static::assertFalse($object->hasQueryMatcher());
         $matcher = new QueryMatcher($constraint);
         $object->setQueryMatcher($matcher);
-        $this->assertSame($matcher, $object->getQueryMatcher());
-        $this->assertTrue($object->hasQueryMatcher());
+        static::assertSame($matcher, $object->getQueryMatcher());
+        static::assertTrue($object->hasQueryMatcher());
         $this->expectException('RuntimeException');
         $object->setQueryMatcher($matcher);
     }
 
-    public function provideQueryMatcher(): array
+    public static function provideQueryMatcher(): array
     {
         return [
-            [$this->createMock(Constraint::class)],
-            [$this->stringStartsWith('SELECT')],
-            [new EqualsSQLQueriesConstraint('SELECT * FROM `t`')],
+            [fn (self $testCase) => $testCase->createMock(Constraint::class)],
+            [fn ($dummy) => static::stringStartsWith('SELECT')],
+            [fn ($dummy) => new EqualsSQLQueriesConstraint('SELECT * FROM `t`')],
         ];
     }
 
     /**
      * @dataProvider  provideParametersMatcher
      */
-    public function testParametersMatcher(ParametersMatcher $rule): void
+    public function testParametersMatcher(callable $callable): void
     {
+        $rule = $callable($this);
         $object = new Matcher($this->createMock(RecordedInvocation::class));
-        $this->assertFalse($object->hasParametersMatcher());
+        static::assertFalse($object->hasParametersMatcher());
         $object->setParametersMatcher($rule);
-        $this->assertSame($rule, $object->getParametersMatcher());
-        $this->assertTrue($object->hasParametersMatcher());
+        static::assertSame($rule, $object->getParametersMatcher());
+        static::assertTrue($object->hasParametersMatcher());
         $this->expectException('RuntimeException');
         $object->setParametersMatcher($rule);
     }
 
-    public function provideParametersMatcher(): array
+    public static function provideParametersMatcher(): array
     {
         return [
-            [$this->createMock(ParametersMatcher::class)],
-            [new ParametersMatch([1, 2])],
-            [new AnyParameters],
+            [fn (self $testCase) => $testCase->createMock(ParametersMatcher::class)],
+            [fn ($dummy) => new ParametersMatch([1, 2])],
+            [fn ($dummy) => new AnyParameters],
         ];
     }
 
     /**
      * @dataProvider  provideInvoked
      */
-    public function testInvoked(Invocation $invocation, array $invocationMatcherSetup, ?array $stubSetup): void
+    public function testInvoked(callable $callable): void
     {
+        list($invocation, $invocationMatcherSetup, $stubSetup) = $callable($this);
         $invocationMatcher = $this->createMock(RecordedInvocation::class);
         $this->setupMockObject($invocationMatcher, $invocationMatcherSetup);
 
@@ -120,14 +124,14 @@ class MatcherTest extends Testcase
             $object->setStub($stub);
         }
         $actual = $object->invoked($invocation);
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
-    public function provideInvoked(): array
+    public static function provideInvoked(): array
     {
         return [
-            $this->createInvokedTestCase(FALSE),
-            $this->createInvokedTestCase(TRUE),
+            [ fn (self $testCase) => $testCase->createInvokedTestCase(FALSE) ],
+            [ fn (self $testCase) => $testCase->createInvokedTestCase(TRUE) ],
         ];
     }
 
@@ -139,7 +143,7 @@ class MatcherTest extends Testcase
             [
                 'invoked' => [
                     [
-                        'expects' => $this->once(),
+                        'expects' => static::once(),
                         'with' => [$invocation],
                     ],
                 ],
@@ -149,7 +153,7 @@ class MatcherTest extends Testcase
                 : [
                       'invoke' => [
                           [
-                              'expects' => $this->once(),
+                              'expects' => static::once(),
                               'with' => [$invocation],
                           ],
                       ],
@@ -160,13 +164,10 @@ class MatcherTest extends Testcase
     /**
      * @dataProvider  provideMatches
      */
-    public function testMatches(
-        Invocation $invocation,
-        array $invocationMatcherSetup,
-        ?array $queryMatcherSetup,
-        bool $expected
-    ): void
+    public function testMatches(callable $callable): void
     {
+        list($invocation,$invocationMatcherSetup, $queryMatcherSetup, $expected) = $callable($this);
+
         $invocationMatcher = $this->createMock(RecordedInvocation::class);
         $this->setupMockObject($invocationMatcher, $invocationMatcherSetup);
 
@@ -177,18 +178,18 @@ class MatcherTest extends Testcase
             $object->setQueryMatcher($queryMatcher);
         }
         $actual = $object->matches($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
-            $this->createMatchesTestCase(TRUE, NULL, TRUE),
-            $this->createMatchesTestCase(TRUE, TRUE, TRUE),
-            $this->createMatchesTestCase(TRUE, FALSE, FALSE),
-            $this->createMatchesTestCase(FALSE, NULL, FALSE),
-            $this->createMatchesTestCase(FALSE, TRUE, FALSE),
-            $this->createMatchesTestCase(FALSE, FALSE, FALSE),
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, NULL, TRUE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, TRUE, TRUE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, FALSE, FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, NULL, FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, TRUE, FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, FALSE, FALSE) ],
         ];
     }
 
@@ -204,9 +205,9 @@ class MatcherTest extends Testcase
             [
                 'matches' => [
                     [
-                        'expects' => $this->once(),
+                        'expects' => static::once(),
                         'with' => [$invocation],
-                        'will' => $this->returnValue($matchesInvocationMatcher),
+                        'will' => static::returnValue($matchesInvocationMatcher),
                     ]
                 ],
             ],
@@ -215,9 +216,9 @@ class MatcherTest extends Testcase
                 : [
                       'matches' => [
                           [
-                              'expects' => $matchesInvocationMatcher ? $this->once() : $this->never(),
+                              'expects' => $matchesInvocationMatcher ? static::once() : static::never(),
                               'with' => [$invocation],
-                              'will' => $this->returnValue($matchesQueryMatcher),
+                              'will' => static::returnValue($matchesQueryMatcher),
                           ],
                       ],
                   ],
@@ -236,27 +237,27 @@ class MatcherTest extends Testcase
         $object = new Matcher($invocationMatcher);
         $this->expectExceptionFromArgument($expected);
         $actual = $object->verify();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideVerifyInvocationMatcher(): array
+    public static function provideVerifyInvocationMatcher(): array
     {
         return [
-            $this->createVerifyInvocationMatcherTestCase(TRUE),
-            $this->createVerifyInvocationMatcherTestCase(FALSE),
+            static::createVerifyInvocationMatcherTestCase(TRUE),
+            static::createVerifyInvocationMatcherTestCase(FALSE),
         ];
     }
 
-    private function createVerifyInvocationMatcherTestCase(bool $willVerify): array
+    private static function createVerifyInvocationMatcherTestCase(bool $willVerify): array
     {
         return [
             [
                 'verify' => [
                     [
-                        'expects' => $this->once(),
+                        'expects' => static::once(),
                         'will' => $willVerify
-                            ? $this->returnValue(NULL)
-                            : $this->throwException(new ExpectationFailedException('Invocation matcher failed')),
+                            ? static::returnValue(NULL)
+                            : static::throwException(new ExpectationFailedException('Invocation matcher failed')),
                     ],
                 ],
             ],
@@ -283,49 +284,49 @@ class MatcherTest extends Testcase
         $this->expectExceptionFromArgument($expected);
 
         $actual = $object->verify();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideVerifyQueryMatcher(): array
+    public static function provideVerifyQueryMatcher(): array
     {
         return [
-            $this->createVerifyQueryMatcherTestCase(FALSE, FALSE, TRUE),
-            $this->createVerifyQueryMatcherTestCase(FALSE, FALSE, FALSE),
-            $this->createVerifyQueryMatcherTestCase(TRUE, FALSE, NULL),
-            $this->createVerifyQueryMatcherTestCase(TRUE, TRUE, NULL),
-            $this->createVerifyQueryMatcherTestCase(FALSE, TRUE, NULL),
+            static::createVerifyQueryMatcherTestCase(FALSE, FALSE, TRUE),
+            static::createVerifyQueryMatcherTestCase(FALSE, FALSE, FALSE),
+            static::createVerifyQueryMatcherTestCase(TRUE, FALSE, NULL),
+            static::createVerifyQueryMatcherTestCase(TRUE, TRUE, NULL),
+            static::createVerifyQueryMatcherTestCase(FALSE, TRUE, NULL),
         ];
     }
 
-    private function createVerifyQueryMatcherTestCase(bool $isAny, bool $isNever, ?bool $willVerify): array
+    private static function createVerifyQueryMatcherTestCase(bool $isAny, bool $isNever, ?bool $willVerify): array
     {
         return [
             [
                 'verify' => [
                     [
-                        'expects' => $this->once(),
+                        'expects' => static::once(),
                     ],
                 ],
                 'isAnyInvokedCount' => [
                     [
-                        'expects' => $this->once(),
-                        'will' => $this->returnValue($isAny),
+                        'expects' => static::once(),
+                        'will' => static::returnValue($isAny),
                     ],
                 ],
                 'isNeverInvokedCount' => [
                     [
-                        'expects' => $this->once(),
-                        'will' => $this->returnValue($isNever),
+                        'expects' => static::once(),
+                        'will' => static::returnValue($isNever),
                     ],
                 ],
             ],
             [
                 'verify' => [
                     [
-                        'expects' => ! $isAny && ! $isNever ? $this->once() : $this->never(),
+                        'expects' => ! $isAny && ! $isNever ? static::once() : static::never(),
                         'will' => $willVerify
-                            ? $this->returnValue(NULL)
-                            : $this->throwException(new ExpectationFailedException('Query matcher failed')),
+                            ? static::returnValue(NULL)
+                            : static::throwException(new ExpectationFailedException('Query matcher failed')),
                     ],
                 ],
             ],
@@ -352,49 +353,49 @@ class MatcherTest extends Testcase
         $this->expectExceptionFromArgument($expected);
 
         $actual = $object->verify();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideVerifyParametersMatcher(): array
+    public static function provideVerifyParametersMatcher(): array
     {
         return [
-            $this->createVerifyParametersMatcherTestCase(FALSE, FALSE, TRUE),
-            $this->createVerifyParametersMatcherTestCase(FALSE, FALSE, FALSE),
-            $this->createVerifyParametersMatcherTestCase(TRUE, FALSE, NULL),
-            $this->createVerifyParametersMatcherTestCase(TRUE, TRUE, NULL),
-            $this->createVerifyParametersMatcherTestCase(FALSE, TRUE, NULL),
+            static::createVerifyParametersMatcherTestCase(FALSE, FALSE, TRUE),
+            static::createVerifyParametersMatcherTestCase(FALSE, FALSE, FALSE),
+            static::createVerifyParametersMatcherTestCase(TRUE, FALSE, NULL),
+            static::createVerifyParametersMatcherTestCase(TRUE, TRUE, NULL),
+            static::createVerifyParametersMatcherTestCase(FALSE, TRUE, NULL),
         ];
     }
 
-    private function createVerifyParametersMatcherTestCase(bool $isAny, bool $isNever, ?bool $willVerify): array
+    private static function createVerifyParametersMatcherTestCase(bool $isAny, bool $isNever, ?bool $willVerify): array
     {
         return [
             [
                 'verify' => [
                     [
-                        'expects' => $this->once(),
+                        'expects' => static::once(),
                     ],
                 ],
                 'isAnyInvokedCount' => [
                     [
-                        'expects' => $this->once(),
-                        'will' => $this->returnValue($isAny),
+                        'expects' => static::once(),
+                        'will' => static::returnValue($isAny),
                     ],
                 ],
                 'isNeverInvokedCount' => [
                     [
-                        'expects' => $this->once(),
-                        'will' => $this->returnValue($isNever),
+                        'expects' => static::once(),
+                        'will' => static::returnValue($isNever),
                     ],
                 ],
             ],
             [
                 'verify' => [
                     [
-                        'expects' => ! $isAny && ! $isNever ? $this->once() : $this->never(),
+                        'expects' => ! $isAny && ! $isNever ? static::once() : static::never(),
                         'will' => $willVerify
-                            ? $this->returnValue(NULL)
-                            : $this->throwException(new ExpectationFailedException('Parameters matcher failed')),
+                            ? static::returnValue(NULL)
+                            : static::throwException(new ExpectationFailedException('Parameters matcher failed')),
                     ],
                 ],
             ],
@@ -417,8 +418,8 @@ class MatcherTest extends Testcase
             [
                 'toString' => [
                     [
-                        'expects' => $this->once(),
-                        'will' => $this->returnValue('an invocation'),
+                        'expects' => static::once(),
+                        'will' => static::returnValue('an invocation'),
                     ]
                 ],
             ]
@@ -433,10 +434,10 @@ class MatcherTest extends Testcase
         }
 
         $actual = $object->toString();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideToString(): array
+    public static function provideToString(): array
     {
         return [
             [
@@ -445,12 +446,12 @@ class MatcherTest extends Testcase
                 'an invocation',
             ],
             [
-                new QueryMatcher($this->anything()),
+                new QueryMatcher(static::anything()),
                 NULL,
                 'an invocation where query is anything',
             ],
             [
-                new QueryMatcher($this->equalTo('SELECT * FROM `t1`')),
+                new QueryMatcher(static::equalTo('SELECT * FROM `t1`')),
                 NULL,
                 "an invocation where query is equal to 'SELECT * FROM `t1`'",
             ],
@@ -460,7 +461,7 @@ class MatcherTest extends Testcase
                 "an invocation with any parameters",
             ],
             [
-                new QueryMatcher($this->equalTo('SELECT * FROM `t1` WHERE `c` = ?')),
+                new QueryMatcher(static::equalTo('SELECT * FROM `t1` WHERE `c` = ?')),
                 new ParametersMatch([1]),
                 "an invocation where query is equal to 'SELECT * FROM `t1` WHERE `c` = ?' with parameter 1 is identical to 1",
             ],

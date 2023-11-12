@@ -20,33 +20,33 @@ class MockTraitTest extends Testcase
         $setMockObject = NULL;
         $registerMockObject = NULL;
         $db = $this->createMock(DatabaseDriverInterface::class);
-        $db->expects($this->once())
+        $db->expects(static::once())
             ->method('setMockObject')
-            ->with($this->callback(
+            ->with(static::callback(
                 function ($mock) use ( & $setMockObject) {
-                    $this->assertInstanceOf(Mock::class, $mock);
+                    static::assertInstanceOf(Mock::class, $mock);
                     $setMockObject = $mock;
                     return TRUE;
                 }
             ));
         $methods = ['getDatabaseDriver'];
         $object = $this->getMockForTrait(MockTrait::class, [], '', TRUE, TRUE, TRUE, $methods);
-        $object->expects($this->once())
+        $object->expects(static::once())
             ->method('getDatabaseDriver')
             ->will($this->returnValue($db));
-        $object->expects($this->once())
+        $object->expects(static::once())
             ->method('registerMockObject')
-            ->with($this->callback(
+            ->with(static::callback(
                 function ($mockObject) use ( & $registerMockObject) {
-                    $this->assertInstanceOf(MockWrapper::class, $mockObject);
-                    $mock = $this->getObjectPropertyValue($mockObject, 'object');
-                    $this->assertInstanceOf(Mock::class, $mock);
+                    static::assertInstanceOf(MockWrapper::class, $mockObject);
+                    $mock = static::getObjectPropertyValue($mockObject, 'object');
+                    static::assertInstanceOf(Mock::class, $mock);
                     $registerMockObject = $mock;
                     return TRUE;
                 }
             ));
         $actual = $object->createDatabaseMock();
-        $this->assertSame($actual, $setMockObject);
-        $this->assertSame($actual, $registerMockObject);
+        static::assertSame($actual, $setMockObject);
+        static::assertSame($actual, $registerMockObject);
     }
 }

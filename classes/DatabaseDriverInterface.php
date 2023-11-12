@@ -14,4 +14,6 @@ interface DatabaseDriverInterface
      * @param  Mock  $mock
      */
     public function setMockObject(Mock $mock): void;
+
+    public function query($query);
 }

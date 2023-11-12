@@ -18,30 +18,37 @@ class ConsecutiveCallsStubTest extends Testcase
     /**
      * @dataProvider  provideAddStub
      */
-    public function testAddStub(array $initialStack, Stub $stub): void
+    public function testAddStub(array $initialStackCallableArray, callable $stubCallable): void
     {
+        $initialStack = array();
+        foreach($initialStackCallableArray as $initialStackCallable)
+        {
+            $initialStack[] = $initialStackCallable($this);
+        }
+        $stub = $stubCallable($this);
+
         $object = new ConsecutiveCallsStub($initialStack);
         $initialStackCount = count($initialStack);
         $object->addStub($stub);
-        $stack = $this->getObjectPropertyValue($object, 'stack');
+        $stack = static::getObjectPropertyValue($object, 'stack');
         $actual = $stack[$initialStackCount];
-        $this->assertSame($stub, $actual);
-        $this->assertCount($initialStackCount + 1, $stack);
+        static::assertSame($stub, $actual);
+        static::assertCount($initialStackCount + 1, $stack);
     }
 
-    public function provideAddStub(): array
+    public static function provideAddStub(): array
     {
         return [
             [
                 [],
-                $this->createMock(Stub::class),
+                fn (self $testCase) => $testCase->createMock(Stub::class),
             ],
             [
                 [
-                    $this->createMock(Stub::class),
-                    $this->createMock(Stub::class),
+                    fn (self $testCase) => $testCase->createMock(Stub::class),
+                    fn (self $testCase) => $testCase->createMock(Stub::class),
                 ],
-                $this->createMock(Stub::class),
+                fn (self $testCase) => $testCase->createMock(Stub::class),
             ],
         ];
     }
@@ -49,19 +56,30 @@ class ConsecutiveCallsStubTest extends Testcase
     /**
      * @dataProvider  provideInvoke
      */
-    public function testInvoke(array $stack, array $invocations): void
+    public function testInvoke(array $stackCallable, array $invocations): void
     {
+        $stack = array();
+        foreach($stackCallable as $t)
+        {
+            $stack[] = $t($this);
+        }
         $object = new ConsecutiveCallsStub($stack);
-        foreach ($invocations as $invocation) {
-            if ($invocation instanceof Exception) {
-                $this->expectExceptionObject($invocation);
+        foreach ($invocations as $invocationCallable)
+        {
+            if ($invocationCallable instanceof Exception)
+            {
+                $this->expectExceptionObject($invocationCallable);
                 $invocation = $this->createMock(Invocation::class);
+            }
+            else
+            {
+                $invocation = $invocationCallable($this);
             }
             $object->invoke($invocation);
         }
     }
 
-    public function provideInvoke(): array
+    public static function provideInvoke(): array
     {
         $resultSet1 = [
             ['id' => 1, 'name' => 'foo'],
@@ -70,20 +88,20 @@ class ConsecutiveCallsStubTest extends Testcase
         return [
             [
                 [
-                    $this->createStubMock('setResultSet', $resultSet1),
+                    fn (self $testCase) => $testCase->createStubMock('setResultSet', $resultSet1),
                 ],
                 [
-                    $this->createInvocationExpectMethod('setResultSet', $resultSet1),
+                    fn (self $testCase) => $testCase->createInvocationExpectMethod('setResultSet', $resultSet1),
                 ],
             ],
             [
                 [
-                    $this->createStubMock('setLastInsertId', 1),
-                    $this->createStubMock('setLastInsertId', 2),
+                    fn (self $testCase) => $testCase->createStubMock('setLastInsertId', 1),
+                    fn (self $testCase) => $testCase->createStubMock('setLastInsertId', 2),
                 ],
                 [
-                    $this->createInvocationExpectMethod('setLastInsertId', 1),
-                    $this->createInvocationExpectMethod('setLastInsertId', 2),
+                    fn (self $testCase) => $testCase->createInvocationExpectMethod('setLastInsertId', 1),
+                    fn (self $testCase) => $testCase->createInvocationExpectMethod('setLastInsertId', 2),
                     new RuntimeException('No more items left in stack'),
                 ],
             ],
@@ -93,7 +111,7 @@ class ConsecutiveCallsStubTest extends Testcase
     private function createStubMock(string $method, $argument): Stub
     {
         $stub = $this->createMock(Stub::class);
-        $stub->expects($this->once())
+        $stub->expects(static::once())
             ->method('invoke')
             ->willReturnCallback(function (Invocation $invocation) use ($method, $argument) {
                 $invocation->$method($argument);

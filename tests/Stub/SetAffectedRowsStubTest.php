@@ -20,7 +20,7 @@ class SetAffectedRowsStubTest extends Testcase
         $object->invoke($invocation);
     }
 
-    public function provideInvoke(): array
+    public static function provideInvoke(): array
     {
         return [
             [0],

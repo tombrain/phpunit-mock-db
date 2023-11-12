@@ -22,77 +22,77 @@ class KeywordBasedQueryInvocationFactoryTest extends Testcase
         $object = $this->createObject();
         $this->expectExceptionFromArgument($expected);
         $actual = $object->createInvocation($sql);
-        $this->assertInstanceOf(QueryInvocation::class, $actual);
-        $this->assertIsCallable($expected);
+        static::assertInstanceOf(QueryInvocation::class, $actual);
+        static::assertIsCallable($expected);
         call_user_func($expected, $actual);
     }
 
-    public function provideCreateInvocation(): array
+    public static function provideCreateInvocation(): array
     {
         return [
-            $this->createCreateInvocationTestCaseForUpdateKeyword('UPDATE `t1` SET `name` = "foo"'),
-            $this->createCreateInvocationTestCaseForUpdateKeyword('DELETE FROM `t1`'),
-            $this->createCreateInvocationTestCaseForInsertKeyword('INSERT INTO `t1` SELECT * FROM `t2`'),
-            $this->createCreateInvocationTestCaseForInsertKeyword('REPLACE INTO `t1` VALUES ("foo", "bar")'),
-            $this->createCreateInvocationTestCaseForSelectKeyword('SELECT * FROM `t`'),
-            $this->createCreateInvocationTestCaseForSelectKeyword('SHOW PROCESSLIST'),
-            $this->createCreateInvocationTestCaseForSelectKeyword('EXEC [sys].[sp_helpindex]'),
-            $this->createCreateInvocationTestCaseForUnknownKeyword('BEGIN'),
-            $this->createCreateInvocationTestCaseForUnknownKeyword('COMMIT'),
-            $this->createCreateInvocationTestCaseForUnknownKeyword('ROLLBACK'),
-            $this->createCreateInvocationTestCaseForException(''),
+            static::createCreateInvocationTestCaseForUpdateKeyword('UPDATE `t1` SET `name` = "foo"'),
+            static::createCreateInvocationTestCaseForUpdateKeyword('DELETE FROM `t1`'),
+            static::createCreateInvocationTestCaseForInsertKeyword('INSERT INTO `t1` SELECT * FROM `t2`'),
+            static::createCreateInvocationTestCaseForInsertKeyword('REPLACE INTO `t1` VALUES ("foo", "bar")'),
+            static::createCreateInvocationTestCaseForSelectKeyword('SELECT * FROM `t`'),
+            static::createCreateInvocationTestCaseForSelectKeyword('SHOW PROCESSLIST'),
+            static::createCreateInvocationTestCaseForSelectKeyword('EXEC [sys].[sp_helpindex]'),
+            static::createCreateInvocationTestCaseForUnknownKeyword('BEGIN'),
+            static::createCreateInvocationTestCaseForUnknownKeyword('COMMIT'),
+            static::createCreateInvocationTestCaseForUnknownKeyword('ROLLBACK'),
+            static::createCreateInvocationTestCaseForException(''),
         ];
     }
 
-    private function createCreateInvocationTestCaseForUpdateKeyword(string $sql): array
-    {
-        return [
-            $sql,
-            function (Invocation $actual) {
-                $this->assertSame(0, $actual->getAffectedRows());
-                $this->assertNull($actual->getLastInsertId());
-                $this->assertNull($actual->getResultSet());
-            }
-        ];
-    }
-
-    private function createCreateInvocationTestCaseForInsertKeyword(string $sql): array
+    private static function createCreateInvocationTestCaseForUpdateKeyword(string $sql): array
     {
         return [
             $sql,
             function (Invocation $actual) {
-                $this->assertSame(0, $actual->getAffectedRows());
-                $this->assertSame(1, $actual->getLastInsertId());
-                $this->assertNull($actual->getResultSet());
+                static::assertSame(0, $actual->getAffectedRows());
+                static::assertNull($actual->getLastInsertId());
+                static::assertNull($actual->getResultSet());
             }
         ];
     }
 
-    private function createCreateInvocationTestCaseForSelectKeyword(string $sql): array
+    private static function createCreateInvocationTestCaseForInsertKeyword(string $sql): array
     {
         return [
             $sql,
             function (Invocation $actual) {
-                $this->assertSame([], $actual->getResultSet());
-                $this->assertNull($actual->getAffectedRows());
-                $this->assertNull($actual->getLastInsertId());
+                static::assertSame(0, $actual->getAffectedRows());
+                static::assertSame(1, $actual->getLastInsertId());
+                static::assertNull($actual->getResultSet());
             }
         ];
     }
 
-    private function createCreateInvocationTestCaseForUnknownKeyword(string $sql): array
+    private static function createCreateInvocationTestCaseForSelectKeyword(string $sql): array
     {
         return [
             $sql,
             function (Invocation $actual) {
-                $this->assertNull($actual->getAffectedRows());
-                $this->assertNull($actual->getLastInsertId());
-                $this->assertNull($actual->getResultSet());
+                static::assertSame([], $actual->getResultSet());
+                static::assertNull($actual->getAffectedRows());
+                static::assertNull($actual->getLastInsertId());
             }
         ];
     }
 
-    private function createCreateInvocationTestCaseForException(string $sql): array
+    private static function createCreateInvocationTestCaseForUnknownKeyword(string $sql): array
+    {
+        return [
+            $sql,
+            function (Invocation $actual) {
+                static::assertNull($actual->getAffectedRows());
+                static::assertNull($actual->getLastInsertId());
+                static::assertNull($actual->getResultSet());
+            }
+        ];
+    }
+
+    private static function createCreateInvocationTestCaseForException(string $sql): array
     {
         return [$sql, new InvalidArgumentException];
     }

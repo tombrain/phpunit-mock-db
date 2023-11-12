@@ -6,6 +6,8 @@ use Exception,
     PHPUnit\Framework\TestCase as FrameworkTestCase,
     ReflectionProperty;
 
+use PHPUnit\Framework\MockObject\Rule\InvokedAtIndex as InvokedAtIndexMatcher;
+
 /**
  * Testcase
  * 
@@ -29,10 +31,21 @@ abstract class Testcase extends FrameworkTestCase
      * @param   string  $name
      * @return  mixed
      */
-    protected function getObjectPropertyValue($object, string $name)
+    protected static function getObjectPropertyValue($object, string $name)
     {
         $property = new ReflectionProperty($object, $name);
         $property->setAccessible(TRUE);
         return $property->getValue($object);
+    }
+
+    public static function at_hidingDeprecatedWarning(int $index): InvokedAtIndexMatcher
+    {
+        $stack = debug_backtrace();
+
+        while (!empty($stack)) {
+            $frame = array_pop($stack);
+        }
+
+        return new InvokedAtIndexMatcher($index);
     }
 }

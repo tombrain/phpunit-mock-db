@@ -19,19 +19,19 @@ abstract class Testcase extends MockDB\Testcase
      * @param  string  $expectedInstanceOf
      * @param  string  $attribute
      */
-    protected function assertConsecutiveStubs(
+    protected static function assertConsecutiveStubs(
         Stub $stub,
         array $expectedItems,
         string $expectedInstanceOf,
         string $attribute
     ): void
     {
-        $this->assertInstanceOf(Stub\ConsecutiveCallsStub::class, $stub);
-        $stack = $this->getObjectPropertyValue($stub, 'stack');
-        $this->assertIsArray($stack);
-        $this->assertCount(count($expectedItems), $stack);
+        static::assertInstanceOf(Stub\ConsecutiveCallsStub::class, $stub);
+        $stack = static::getObjectPropertyValue($stub, 'stack');
+        static::assertIsArray($stack);
+        static::assertCount(count($expectedItems), $stack);
         for ($i = 0; $i < count($expectedItems); $i++) {
-            $this->assertStub($stack[$i], $expectedInstanceOf, $attribute, $expectedItems[$i]);
+            static::assertStub($stack[$i], $expectedInstanceOf, $attribute, $expectedItems[$i]);
         }
     }
 
@@ -41,15 +41,15 @@ abstract class Testcase extends MockDB\Testcase
      * @param  string  $attribute
      * @param  mixed   $expectedAttribute
      */
-    protected function assertStub(
+    protected static function assertStub(
         Stub $stub,
         string $expectedInstanceOf,
         string $attribute,
         $expectedAttribute
     ): void
     {
-        $this->assertInstanceOf($expectedInstanceOf, $stub);
-        $actual = $this->getObjectPropertyValue($stub, $attribute);
-        $this->assertSame($expectedAttribute, $actual);
+        static::assertInstanceOf($expectedInstanceOf, $stub);
+        $actual = static::getObjectPropertyValue($stub, $attribute);
+        static::assertSame($expectedAttribute, $actual);
     }
 }

@@ -23,7 +23,7 @@ abstract class Testcase extends MockDB\Testcase
     protected function createInvocationExpectMethod(string $name, $argument): Invocation
     {
         $invocation = $this->createInvocation([$name]);
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method($name)
             ->with($argument);
         return $invocation;
@@ -38,7 +38,7 @@ abstract class Testcase extends MockDB\Testcase
         $invocation = $this->createMock(Invocation::class);
         foreach ($this->getAbstractMethods(Invocation::class) as $name) {
             if ( ! in_array($name, $skipMethods)) {
-                $invocation->expects($this->never())
+                $invocation->expects(static::never())
                     ->method($name);
             }
         }

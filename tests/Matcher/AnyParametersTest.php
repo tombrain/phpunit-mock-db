@@ -17,7 +17,7 @@ class AnyParametersTest extends Testcase
     {
         $object = $this->createObject();
         $actual = $object->toString();
-        $this->assertSame('with any parameters', $actual);
+        static::assertSame('with any parameters', $actual);
     }
 
     /**
@@ -27,14 +27,14 @@ class AnyParametersTest extends Testcase
     {
         $object = $this->createObject();
         $invocation = $this->createMock(BaseInvocation::class);
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method('getParameters')
             ->willReturn($parameters);
         $actual = $object->matches($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
             [[], FALSE],
@@ -47,14 +47,14 @@ class AnyParametersTest extends Testcase
         $object = $this->createObject();
         $invocation = $this->createMock(BaseInvocation::class);
         $actual = $object->invoked($invocation);
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
     public function testVerify(): void
     {
         $object = $this->createObject();
         $actual = $object->verify();
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
     private function createObject(): AnyParameters

@@ -22,25 +22,29 @@ class InvocationMockerTest extends Testcase
     public function testAddMatcher(array $matchers): void
     {
         $object = $this->createObject();
-        foreach ($matchers as $matcher) {
+
+        $expArr = array();
+        foreach ($matchers as $callable) {
+            $matcher = $callable($this);
+            $expArr[] = $matcher;
             $object->addMatcher($matcher);
         }
-        $actual = $this->getObjectPropertyValue($object, 'matchers');
-        $this->assertSame($matchers, $actual);
+        $actual = static::getObjectPropertyValue($object, 'matchers');
+        static::assertSame($expArr, $actual);
     }
 
-    public function provideAddMatcher(): array
+    public static function provideAddMatcher(): array
     {
         return [
             [
                 [
-                    $this->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
             ],
             [
                 [
-                    $this->createMock(RecordedInvocation::class),
-                    $this->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
             ],
         ];
@@ -52,14 +56,15 @@ class InvocationMockerTest extends Testcase
     public function testHasMatchers(array $matchers, bool $expected): void
     {
         $object = $this->createObject();
-        foreach ($matchers as $matcher) {
+        foreach ($matchers as $callable) {
+            $matcher = $callable($this);
             $object->addMatcher($matcher);
         }
         $actual = $object->hasMatchers();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideHasMatchers(): array
+    public static function provideHasMatchers(): array
     {
         return [
             [
@@ -68,14 +73,14 @@ class InvocationMockerTest extends Testcase
             ],
             [
                 [
-                    $this->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
                 TRUE,
             ],
             [
                 [
-                    $this->createMock(RecordedInvocation::class),
-                    $this->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
+                    fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
                 TRUE,
             ],
@@ -88,12 +93,12 @@ class InvocationMockerTest extends Testcase
     public function testGetRequireMatch(bool $value): void
     {
         $object = $this->createObject();
-        $this->assertTrue($object->getRequireMatch());
+        static::assertTrue($object->getRequireMatch());
         $requireMatch = new ReflectionProperty(InvocationMocker::class, 'requireMatch');
         $requireMatch->setAccessible(TRUE);
         $requireMatch->setValue($object, $value);
         $actual = $object->getRequireMatch();
-        $this->assertSame($value, $actual);
+        static::assertSame($value, $actual);
     }
 
 
@@ -104,11 +109,11 @@ class InvocationMockerTest extends Testcase
     {
         $object = $this->createObject();
         $object->setRequireMatch($value);
-        $actual = $this->getObjectPropertyValue($object, 'requireMatch');
-        $this->assertSame($value, $actual);
+        $actual = static::getObjectPropertyValue($object, 'requireMatch');
+        static::assertSame($value, $actual);
     }
 
-    public function provideRequireMatch(): array
+    public static function provideRequireMatch(): array
     {
         return [
             [TRUE],
@@ -119,23 +124,24 @@ class InvocationMockerTest extends Testcase
     /**
      * @dataProvider  provideExpects
      */
-    public function testExpects(MatcherInvocation $matcher): void
+    public function testExpects($callable): void
     {
+        $matcher = $callable($this);
         $object = $this->createObject();
         $builder = $object->expects($matcher);
-        $this->assertInstanceOf(InvocationMockerBuilder::class, $builder);
+        static::assertInstanceOf(InvocationMockerBuilder::class, $builder);
         // Risky part, actually testing implementation of other classes...
-        $matcherWrapper = $this->getObjectPropertyValue($builder, 'matcher');
-        $this->assertInstanceOf(Matcher::class, $matcherWrapper);
-        $actual = $this->getObjectPropertyValue($matcherWrapper, 'invocationMatcher');
-        $this->assertSame($matcher, $actual);
+        $matcherWrapper = static::getObjectPropertyValue($builder, 'matcher');
+        static::assertInstanceOf(Matcher::class, $matcherWrapper);
+        $actual = static::getObjectPropertyValue($matcherWrapper, 'invocationMatcher');
+        static::assertSame($matcher, $actual);
     }
 
-    public function provideExpects(): array
+    public static function provideExpects(): array
     {
         return [
             [
-                $this->createMock(RecordedInvocation::class),
+                fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
             ],
         ];
     }
@@ -143,30 +149,27 @@ class InvocationMockerTest extends Testcase
     /**
      * @dataProvider  provideInvoke
      */
-    public function testInvoke(
-        bool $requireMatch,
-        array $matchers,
-        Invocation $invocation,
-        ?ExpectationFailedException $expected
-    ): void
+    public function testInvoke(callable $callable): void
     {
+        list($requireMatch, $matchers, $invocation, $expected) = $callable($this);
+
         $object = $this->createObject($matchers);
         $object->setRequireMatch($requireMatch);
         $this->expectExceptionFromArgument($expected);
         $actual = $object->invoke($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideInvoke(): array
+    public static function provideInvoke(): array
     {
         return [
-            $this->createInvokeTestCase(TRUE, [TRUE], NULL),
-            $this->createInvokeTestCase(TRUE, [TRUE, TRUE], NULL),
-            $this->createInvokeTestCase(TRUE, [FALSE, TRUE], NULL),
-            $this->createInvokeTestCase(TRUE, [FALSE, FALSE], new ExpectationFailedException('')),
-            $this->createInvokeTestCase(TRUE, [FALSE], new ExpectationFailedException('')),
-            $this->createInvokeTestCase(FALSE, [FALSE, FALSE], NULL),
-            $this->createInvokeTestCase(FALSE, [FALSE], NULL),
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [TRUE], NULL) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [TRUE, TRUE], NULL) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE, TRUE], NULL) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE, FALSE], new ExpectationFailedException('')) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE], new ExpectationFailedException('')) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(FALSE, [FALSE, FALSE], NULL) ],
+            [ fn (self $testCase) => $testCase->createInvokeTestCase(FALSE, [FALSE], NULL) ],
         ];
     }
 
@@ -182,11 +185,11 @@ class InvocationMockerTest extends Testcase
             array_map(
                 function ($willMatch) use ($invocation) {
                     $object = $this->createMock(MatcherInvocation::class);
-                    $object->expects($this->once())
+                    $object->expects(static::once())
                         ->method('matches')
                         ->with($invocation)
                         ->willReturn($willMatch);
-                    $object->expects($willMatch ? $this->once() : $this->never())
+                    $object->expects($willMatch ? static::once() : static::never())
                         ->method('invoked')
                         ->with($invocation);
                     return $object;
@@ -201,22 +204,24 @@ class InvocationMockerTest extends Testcase
     /**
      * @dataProvider  provideMatches
      */
-    public function testMatches(array $matchers, Invocation $invocation, bool $expected): void
+    public function testMatches(callable $callable): void
     {
+        list($matchers, $invocation, $expected) = $callable($this);
+
         $object = $this->createObject($matchers);
         $actual = $object->matches($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
-            $this->createMatchesTestCase([TRUE], TRUE),
-            $this->createMatchesTestCase([TRUE, TRUE], TRUE),
-            $this->createMatchesTestCase([FALSE], FALSE),
-            $this->createMatchesTestCase([TRUE, FALSE], FALSE),
-            $this->createMatchesTestCase([FALSE, TRUE], FALSE),
-            $this->createMatchesTestCase([FALSE, FALSE], FALSE),
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([TRUE], TRUE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([TRUE, TRUE], TRUE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([FALSE], FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([TRUE, FALSE], FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([FALSE, TRUE], FALSE) ],
+            [ fn (self $testCase) => $testCase->createMatchesTestCase([FALSE, FALSE], FALSE) ],
         ];
     }
 
@@ -228,7 +233,7 @@ class InvocationMockerTest extends Testcase
             array_map(
                 function ($willMatch) use ($invocation, & $willSoFar) {
                     $object = $this->createMock(MatcherInvocation::class);
-                    $object->expects($willSoFar ? $this->once() : $this->never())
+                    $object->expects($willSoFar ? static::once() : static::never())
                         ->method('matches')
                         ->with($invocation)
                         ->willReturn($willMatch);
@@ -245,18 +250,24 @@ class InvocationMockerTest extends Testcase
     /**
      * @dataProvider  provideVerify
      */
-    public function testVerify(array $matchers): void
+    public function testVerify(callable $callable): void
     {
+        $matchers = $callable($this);
+
+        static::assertIsArray($matchers);
+        $matchers = $matchers[0];
+
+       // $matchers = $callable($this);
         $object = $this->createObject($matchers);
         $actual = $object->verify();
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
-    public function provideVerify(): array
+    public static function provideVerify(): array
     {
         return [
-            $this->createVerifyTestCase(1),
-            $this->createVerifyTestCase(2),
+            [ fn (self $testCase) => $testCase->createVerifyTestCase(1) ],
+            [ fn (self $testCase) => $testCase->createVerifyTestCase(2) ],
         ];
     }
 
@@ -266,7 +277,7 @@ class InvocationMockerTest extends Testcase
             array_map(
                 function () {
                     $object = $this->createMock(MatcherInvocation::class);
-                        $object->expects($this->once())
+                        $object->expects(static::once())
                             ->method('verify');
                         return $object;
                 },

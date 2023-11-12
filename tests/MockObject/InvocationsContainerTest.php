@@ -17,27 +17,30 @@ class InvocationsContainerTest extends Testcase
     /**
      * @dataProvider  provideGetMockObjectInvocation
      */
-    public function testGetMockObjectInvocation(array $invocations): void
+    public function testGetMockObjectInvocation(callable $callable): void
     {
+        $invocations = $callable($this);
+        $invocations = $invocations[0];
+        
         $object = new InvocationsContainer;
         $previousInvocations = [];
         foreach ($invocations as $invocation) {
             $wrappedInvocation = $object->getMockObjectInvocation($invocation);
-            $this->assertInstanceOf(MockObjectInvocation::class, $wrappedInvocation);
+            static::assertInstanceOf(MockObjectInvocation::class, $wrappedInvocation);
             $sameWrappedInvocation = $object->getMockObjectInvocation($invocation);
-            $this->assertSame($wrappedInvocation, $sameWrappedInvocation);
+            static::assertSame($wrappedInvocation, $sameWrappedInvocation);
             foreach ($previousInvocations as $previousWrappedInvocation) {
-                $this->assertNotSame($wrappedInvocation, $previousWrappedInvocation);
+                static::assertNotSame($wrappedInvocation, $previousWrappedInvocation);
             }
             $previousInvocations[] = $wrappedInvocation;
         }
     }
 
-    public function provideGetMockObjectInvocation(): array
+    public static function provideGetMockObjectInvocation(): array
     {
         return [
-            $this->createGetMockObjectInvocationTestCase(1),
-            $this->createGetMockObjectInvocationTestCase(5),
+            [ fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(1) ],
+            [ fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(5) ],
         ];
     }
 

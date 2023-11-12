@@ -19,10 +19,10 @@ class QueryInvocationTest extends Testcase
     public function testGetQuery(string $query): void
     {
         $object = $this->createObject($query);
-        $this->assertSame($query, $object->getQuery());
+        static::assertSame($query, $object->getQuery());
     }
 
-    public function provideGetQuery(): array
+    public static function provideGetQuery(): array
     {
         return [
             ['SELECT * FROM `t`'],
@@ -36,10 +36,10 @@ class QueryInvocationTest extends Testcase
     {
         $object = $this->createObject($query);
         $object->setParameters($parameters);
-        $this->assertSame($parameters, $object->getParameters());
+        static::assertSame($parameters, $object->getParameters());
     }
 
-    public function providerParameters(): array
+    public static function providerParameters(): array
     {
         return [
             ['SELECT * FROM `t1` WHERE `c` = ?', [1]],
@@ -53,10 +53,10 @@ class QueryInvocationTest extends Testcase
     {
         $object = $this->createObject($query);
         $object->setAffectedRows($value);
-        $this->assertSame($value, $object->getAffectedRows());
+        static::assertSame($value, $object->getAffectedRows());
     }
 
-    public function provideAffectedRows(): array
+    public static function provideAffectedRows(): array
     {
         return [
             ['UPDATE `t` SET `a` = 1 WHERE `b` = 2', 100],
@@ -70,10 +70,10 @@ class QueryInvocationTest extends Testcase
     {
         $object = $this->createObject($query);
         $object->setLastInsertId($value);
-        $this->assertSame($value, $object->getLastInsertId());
+        static::assertSame($value, $object->getLastInsertId());
     }
 
-    public function provideLastInsertId(): array
+    public static function provideLastInsertId(): array
     {
         return [
             ['INSERT INTO `t` (`a`, `b`) VALUES (1, 2)', 505],
@@ -87,10 +87,10 @@ class QueryInvocationTest extends Testcase
     {
         $object = $this->createObject($query);
         $object->setResultSet($results);
-        $this->assertSame($results, $object->getResultSet());
+        static::assertSame($results, $object->getResultSet());
     }
 
-    public function provideResultSet(): array
+    public static function provideResultSet(): array
     {
         return [
             [

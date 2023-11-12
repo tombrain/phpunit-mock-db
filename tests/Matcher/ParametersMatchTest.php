@@ -23,10 +23,10 @@ class ParametersMatchTest extends Testcase
         $object = $this->createObject($constraints);
         $this->expectExceptionFromArgument($expected);
         $actual = $object->matches($invocation);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideMatches(): array
+    public static function provideMatches(): array
     {
         return [
             'Single parameter match' => [
@@ -51,7 +51,7 @@ class ParametersMatchTest extends Testcase
             ],
             'Invoked without parameters while "anything" expected' => [
                 [],
-                [$this->anything()],
+                [static::anything()],
                 new ExpectationFailedException(''),
             ],
             'Invoked with less parameters than expected' => [
@@ -72,14 +72,14 @@ class ParametersMatchTest extends Testcase
         $object = $this->createObject([]);
         $invocation = $this->createMock(BaseInvocation::class);
         $actual = $object->invoked($invocation);
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
     public function testVerify(): void
     {
         $object = $this->createObject([]);
         $actual = $object->verify();
-        $this->assertNull($actual);
+        static::assertNull($actual);
     }
 
     /**
@@ -89,10 +89,10 @@ class ParametersMatchTest extends Testcase
     {
         $object = $this->createObject($constraints);
         $actual = $object->toString();
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
-    public function provideToString(): array
+    public static function provideToString(): array
     {
         return [
             [
@@ -100,7 +100,7 @@ class ParametersMatchTest extends Testcase
                 'with parameter 1 is identical to 1, parameter 2 is identical to 2 and parameter 3 is identical to 3',
             ],
             [
-                [$this->anything()],
+                [static::anything()],
                 'with parameter 1 is anything',
             ]
         ];
@@ -109,7 +109,7 @@ class ParametersMatchTest extends Testcase
     private function createInvocation(array $parameters): BaseInvocation
     {
         $invocation = $this->createMock(BaseInvocation::class);
-        $invocation->expects($this->once())
+        $invocation->expects(static::once())
             ->method('getParameters')
             ->willReturn($parameters);
         return $invocation;
