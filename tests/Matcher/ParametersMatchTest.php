@@ -75,13 +75,6 @@ class ParametersMatchTest extends Testcase
         static::assertNull($actual);
     }
 
-    public function testVerify(): void
-    {
-        $object = $this->createObject([]);
-        $actual = $object->verify();
-        static::assertNull($actual);
-    }
-
     /**
      * @dataProvider  provideToString
      */

@@ -247,44 +247,6 @@ class InvocationMockerTest extends Testcase
         ];
     }
 
-    /**
-     * @dataProvider  provideVerify
-     */
-    public function testVerify(callable $callable): void
-    {
-        $matchers = $callable($this);
-
-        static::assertIsArray($matchers);
-        $matchers = $matchers[0];
-
-       // $matchers = $callable($this);
-        $object = $this->createObject($matchers);
-        $actual = $object->verify();
-        static::assertNull($actual);
-    }
-
-    public static function provideVerify(): array
-    {
-        return [
-            [ fn (self $testCase) => $testCase->createVerifyTestCase(1) ],
-            [ fn (self $testCase) => $testCase->createVerifyTestCase(2) ],
-        ];
-    }
-
-    private function createVerifyTestCase(int $matchersCount): array
-    {
-        return [
-            array_map(
-                function () {
-                    $object = $this->createMock(MatcherInvocation::class);
-                        $object->expects(static::once())
-                            ->method('verify');
-                        return $object;
-                },
-                array_fill(0, $matchersCount, NULL)
-            ),
-        ];
-    }
 
     private function createObject(array $matchers = []): InvocationMocker
     {

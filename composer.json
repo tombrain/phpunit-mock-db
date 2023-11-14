@@ -22,7 +22,7 @@
     ],
     "require": {
         "tombrain/phpunit-sql": "dev-master",
-        "phpunit/phpunit": "10.2"
+        "phpunit/phpunit": "10.2.7"
     },
     "autoload": {
         "psr-4": {
