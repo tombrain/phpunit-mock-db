@@ -10,7 +10,7 @@ namespace Cz\PHPUnit\MockDB\Invocation;
  * Creates `QueryInvocation` instance and presets default (empty) result set, last insert
  * ID and affected rows count in case queries does not match any expected query.
  * 
- * Only useful when Mock object's 'require match' is set to FALSE, otherwise exception is
+ * Only useful when Mock object's 'require match' is set to false, otherwise exception is
  * thrown on unexpected queries.
  * 
  * @author   czukowski

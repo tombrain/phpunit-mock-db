@@ -89,7 +89,7 @@ class Mock
      */
     public function getInvocationMocker(): InvocationMocker
     {
-        if ($this->invocationMocker === NULL)
+        if ($this->invocationMocker === null)
         {
             $this->invocationMocker = new InvocationMocker;
         }
@@ -101,7 +101,7 @@ class Mock
      */
     public function unsetInvocationMocker(): void
     {
-        $this->invocationMocker = NULL;
+        $this->invocationMocker = null;
     }
 
     /**
@@ -109,7 +109,7 @@ class Mock
      */
     protected function getInvocationsContainer(): InvocationsContainer
     {
-        if ($this->invocationsContainer === NULL)
+        if ($this->invocationsContainer === null)
         {
             $this->invocationsContainer = new InvocationsContainer;
         }

@@ -15,11 +15,11 @@ use Cz\PHPUnit\MockDB\Invocation;
 class QueryInvocation implements Invocation
 {
     /**
-     * @var  integer|NULL
+     * @var  integer|null
      */
     private $affectedRows;
     /**
-     * @var  mixed|NULL
+     * @var  mixed|null
      */
     private $lastInsertId;
     /**
@@ -31,7 +31,7 @@ class QueryInvocation implements Invocation
      */
     private $query;
     /**
-     * @var  iterable|NULL
+     * @var  iterable|null
      */
     private $resultSet;
 
@@ -70,7 +70,7 @@ class QueryInvocation implements Invocation
     }
 
     /**
-     * @return  integer|NULL
+     * @return  integer|null
      */
     public function getAffectedRows(): ?int
     {
@@ -102,7 +102,7 @@ class QueryInvocation implements Invocation
     }
 
     /**
-     * @return  iterable|NULL
+     * @return  iterable|null
      */
     public function getResultSet(): ?iterable
     {

@@ -65,7 +65,7 @@ class Matcher implements MatcherInvocation
      */
     public function hasQueryMatcher(): bool
     {
-        return $this->queryMatcher !== NULL;
+        return $this->queryMatcher !== null;
     }
 
     /**
@@ -94,7 +94,7 @@ class Matcher implements MatcherInvocation
      */
     public function hasParametersMatcher(): bool
     {
-        return $this->parametersMatcher !== NULL;
+        return $this->parametersMatcher !== null;
     }
 
     /**
@@ -138,17 +138,17 @@ class Matcher implements MatcherInvocation
     {
         if (!$this->invocationMatcher->matches($invocation))
         {
-            return FALSE;
+            return false;
         }
         elseif ($this->hasQueryMatcher() && !$this->queryMatcher->matches($invocation))
         {
-            return FALSE;
+            return false;
         }
         elseif ($this->hasParametersMatcher() && !$this->parametersMatcher->matches($invocation))
         {
-            return FALSE;
+            return false;
         }
-        return TRUE;
+        return true;
     }
 
     /**

@@ -78,16 +78,16 @@ class ParametersMatch implements ParametersMatcher
                     $index + 1,
                     $invocation->getQuery()
                 ),
-                TRUE
+                true
             );
 
-            if ($result !== TRUE)
+            if ($result !== true)
             {
                 return $result;
             }
         }
 
-        return TRUE;
+        return true;
     }
 
     /**

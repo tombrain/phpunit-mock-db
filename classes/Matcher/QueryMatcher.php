@@ -42,7 +42,7 @@ class QueryMatcher implements Invocation
      */
     public function matches(BaseInvocation $invocation): bool
     {
-        return $this->constraint->evaluate($invocation->getQuery(), '', TRUE);
+        return $this->constraint->evaluate($invocation->getQuery(), '', true);
     }
 
     /**

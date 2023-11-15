@@ -22,7 +22,7 @@ class TestingDatabaseDriver implements DatabaseDriverInterface
      */
     public function setMockObject(Mock $mock): void
     {
-        if ($this->mock !== NULL)
+        if ($this->mock !== null)
         {
             throw new LogicException('Mock already set');
         }

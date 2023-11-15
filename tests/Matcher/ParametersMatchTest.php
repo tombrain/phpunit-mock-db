@@ -34,22 +34,22 @@ class ParametersMatchTest extends Testcase
             'Single parameter match' => [
                 [1],
                 [1],
-                TRUE,
+                true,
             ],
             'Multiple parameters match' => [
                 [1, 2],
                 [1, 2],
-                TRUE,
+                true,
             ],
             'Expectation failure on 1st parameter' => [
                 [1],
                 [2],
-                FALSE,
+                false,
             ],
             'Expectation failure on latter parameter' => [
                 [1, 2],
                 [1, 3],
-                FALSE,
+                false,
             ],
             'Invoked without parameters while "anything" expected' => [
                 [],
@@ -64,7 +64,7 @@ class ParametersMatchTest extends Testcase
             'Invoked with more parameters than expected (omitted expectations)' => [
                 [1, 2, 3],
                 [1, 2],
-                TRUE,
+                true,
             ],
         ];
     }

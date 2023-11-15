@@ -21,7 +21,7 @@ class MockDouble extends Mock
 
     public function __construct(
         InvocationMocker $invocationMocker,
-        InvocationsContainer $invocationsContainer = NULL
+        InvocationsContainer $invocationsContainer = null
     )
     {
         $this->invocationMocker = $invocationMocker;
@@ -35,7 +35,7 @@ class MockDouble extends Mock
 
     protected function getInvocationsContainer(): InvocationsContainer
     {
-        return $this->invocationsContainer !== NULL
+        return $this->invocationsContainer !== null
             ? $this->invocationsContainer
             : parent::getInvocationMocker();
     }

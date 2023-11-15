@@ -39,8 +39,8 @@ class AnyParametersTest extends Testcase
     public static function provideMatches(): array
     {
         return [
-            [[], FALSE],
-            [[1], TRUE],
+            [[], false],
+            [[1], true],
         ];
     }
 

@@ -78,7 +78,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
         $object = $this->createMockObjectForWillTest(function ($stub) use ($callback)
         {
             static::assertStub($stub, InvokeCallbackStub::class, 'callback', $callback);
-            return TRUE;
+            return true;
         });
         $actual = $object->willInvokeCallback($callback);
         static::assertSame($object, $actual);
@@ -101,7 +101,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
         $object = $this->createMockObjectForWillTest(function ($stub) use ($resultSet)
         {
             static::assertStub($stub, ReturnResultSetStub::class, 'value', $resultSet);
-            return TRUE;
+            return true;
         });
         $actual = $object->willReturnResultSet($resultSet);
         static::assertSame($object, $actual);
@@ -128,7 +128,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
         $object = $this->createMockObjectForWillTest(function ($stub) use ($count)
         {
             static::assertStub($stub, SetAffectedRowsStub::class, 'value', $count);
-            return TRUE;
+            return true;
         });
         $actual = $object->willSetAffectedRows($count);
         static::assertSame($object, $actual);
@@ -137,7 +137,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public static function provideWillSetAffectedRows(): array
     {
         return [
-            [NULL],
+            [null],
             [0],
             [10],
         ];
@@ -151,7 +151,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
         $object = $this->createMockObjectForWillTest(function ($stub) use ($value)
         {
             static::assertStub($stub, SetLastInsertIdStub::class, 'value', $value);
-            return TRUE;
+            return true;
         });
         $actual = $object->willSetLastInsertId($value);
         static::assertSame($object, $actual);
@@ -160,7 +160,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public static function provideWillSetLastInsertId(): array
     {
         return [
-            [NULL],
+            [null],
             [1],
             ['2'],
         ];
@@ -174,7 +174,7 @@ class ConsecutiveCallsBuilderTest extends Testcase
         $object = $this->createMockObjectForWillTest(function ($stub) use ($value)
         {
             static::assertStub($stub, ThrowExceptionStub::class, 'exception', $value);
-            return TRUE;
+            return true;
         });
         $actual = $object->willThrowException($value);
         static::assertSame($object, $actual);

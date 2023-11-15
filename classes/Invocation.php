@@ -28,7 +28,7 @@ interface Invocation
     function setParameters(array $parameters): void;
 
     /**
-     * @return  integer|NULL
+     * @return  integer|null
      */
     function getAffectedRows(): ?int;
 
@@ -38,7 +38,7 @@ interface Invocation
     function setAffectedRows(int $count): void;
 
     /**
-     * @return  mixed|NULL
+     * @return  mixed|null
      */
     function getLastInsertId();
 
@@ -48,7 +48,7 @@ interface Invocation
     function setLastInsertId($value): void;
 
     /**
-     * @return  iterable|NULL
+     * @return  iterable|null
      */
     function getResultSet(): ?iterable;
 

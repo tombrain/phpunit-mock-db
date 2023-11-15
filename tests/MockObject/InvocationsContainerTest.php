@@ -56,7 +56,7 @@ class InvocationsContainerTest extends Testcase
                 {
                     return $this->createMock(BaseInvocation::class);
                 },
-                array_fill(0, $invocationsCount, NULL)
+                array_fill(0, $invocationsCount, null)
             ),
         ];
     }

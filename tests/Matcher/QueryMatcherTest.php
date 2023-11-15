@@ -24,7 +24,7 @@ class QueryMatcherTest extends Testcase
         $constraint = $this->createMock(Constraint::class);
         $constraint->expects(static::once())
             ->method('evaluate')
-            ->with($query, '', TRUE)
+            ->with($query, '', true)
             ->willReturn($expected);
         $invocation = $this->createMock(BaseInvocation::class);
         $invocation->expects(static::once())
@@ -38,8 +38,8 @@ class QueryMatcherTest extends Testcase
     public static function provideMatches(): array
     {
         return [
-            ['SELECT * FROM `t1`', TRUE],
-            ['SELECT * FROM `t2`', FALSE],
+            ['SELECT * FROM `t1`', true],
+            ['SELECT * FROM `t2`', false],
         ];
     }
 }

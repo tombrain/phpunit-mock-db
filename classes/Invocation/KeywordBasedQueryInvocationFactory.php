@@ -28,16 +28,16 @@ class KeywordBasedQueryInvocationFactory implements QueryInvocationFactoryInterf
         if ($keyword)
         {
             $invocation = new QueryInvocation($trimmed);
-            if (in_array($keyword, ['UPDATE', 'DELETE'], TRUE))
+            if (in_array($keyword, ['UPDATE', 'DELETE'], true))
             {
                 $invocation->setAffectedRows(0);
             }
-            elseif (in_array($keyword, ['INSERT', 'REPLACE'], TRUE))
+            elseif (in_array($keyword, ['INSERT', 'REPLACE'], true))
             {
                 $invocation->setAffectedRows(0);
                 $invocation->setLastInsertId(1);
             }
-            elseif (in_array($keyword, ['SELECT', 'SHOW', 'EXEC', 'EXECUTE'], TRUE))
+            elseif (in_array($keyword, ['SELECT', 'SHOW', 'EXEC', 'EXECUTE'], true))
             {
                 $invocation->setResultSet([]);
             }

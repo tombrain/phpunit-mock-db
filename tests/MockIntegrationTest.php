@@ -116,7 +116,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet1,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -137,7 +137,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet1,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -151,7 +151,7 @@ class MockIntegrationTest extends Testcase
                     ],
                 ],
                 [],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::any())
@@ -165,7 +165,7 @@ class MockIntegrationTest extends Testcase
                     ],
                 ],
                 [],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -191,7 +191,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => static::createExpectationFailedException(),
                     ],
                 ],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::once())
@@ -228,7 +228,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet2,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -269,7 +269,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet2,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -293,7 +293,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => static::createExpectationFailedException(),
                     ],
                 ],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::exactly(2))
@@ -323,7 +323,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet1,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::exactly(2))
@@ -347,7 +347,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => static::createExpectationFailedException(),
                     ],
                 ],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::at(1))
@@ -402,7 +402,7 @@ class MockIntegrationTest extends Testcase
             //             'expected' => 2,
             //         ],
             //     ],
-            //     TRUE,
+            //     true,
             // ],
             /**
              * $mock->expects(static::exactly(3))
@@ -443,7 +443,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => 3,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -465,7 +465,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => static::createExpectationFailedException(),
                     ],
                 ],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::exactly(2))
@@ -494,7 +494,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => 1,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -517,7 +517,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => $resultSet1,
                     ],
                 ],
-                TRUE,
+                true,
             ],
             /**
              * $mock->expects(static::once())
@@ -539,7 +539,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => static::createExpectationFailedException(),
                     ],
                 ],
-                FALSE,
+                false,
             ],
             /**
              * $mock->expects(static::exactly(4))
@@ -590,7 +590,7 @@ class MockIntegrationTest extends Testcase
                         'expected' => 3,
                     ],
                 ],
-                TRUE,
+                true,
             ],
         ];
     }
@@ -600,7 +600,7 @@ class MockIntegrationTest extends Testcase
         return new ExpectationFailedException('');
     }
 
-    private function createObject($requireMatch = TRUE): Mock
+    private function createObject($requireMatch = true): Mock
     {
         $object = new Mock;
         $object->setRequireMatch($requireMatch);

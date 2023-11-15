@@ -51,7 +51,7 @@ class MockWrapper implements MockObject
      * @throws  ExpectationFailedException
      * @throws  LogicException
      */
-    public function __phpunit_verify(bool $unsetInvocationMocker = TRUE): void
+    public function __phpunit_verify(bool $unsetInvocationMocker = true): void
     {
         $this->object->verify();
         if ($unsetInvocationMocker)

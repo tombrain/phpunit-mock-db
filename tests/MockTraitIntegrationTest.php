@@ -368,6 +368,6 @@ class MockTraitIntegrationTest extends Testcase
 
     protected function tearDown(): void
     {
-        $this->db = NULL;
+        $this->db = null;
     }
 }

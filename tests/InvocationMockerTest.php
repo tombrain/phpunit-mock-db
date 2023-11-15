@@ -73,20 +73,20 @@ class InvocationMockerTest extends Testcase
         return [
             [
                 [],
-                FALSE,
+                false,
             ],
             [
                 [
                     fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
-                TRUE,
+                true,
             ],
             [
                 [
                     fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                     fn (self $testCase) => $testCase->createMock(RecordedInvocation::class),
                 ],
-                TRUE,
+                true,
             ],
         ];
     }
@@ -99,7 +99,7 @@ class InvocationMockerTest extends Testcase
         $object = $this->createObject();
         static::assertTrue($object->getRequireMatch());
         $requireMatch = new ReflectionProperty(InvocationMocker::class, 'requireMatch');
-        $requireMatch->setAccessible(TRUE);
+        $requireMatch->setAccessible(true);
         $requireMatch->setValue($object, $value);
         $actual = $object->getRequireMatch();
         static::assertSame($value, $actual);
@@ -120,8 +120,8 @@ class InvocationMockerTest extends Testcase
     public static function provideRequireMatch(): array
     {
         return [
-            [TRUE],
-            [FALSE],
+            [true],
+            [false],
         ];
     }
 
@@ -167,13 +167,13 @@ class InvocationMockerTest extends Testcase
     public static function provideInvoke(): array
     {
         return [
-            [fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [TRUE], NULL)],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [TRUE, TRUE], NULL)],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE, TRUE], NULL)],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE, FALSE], new ExpectationFailedException(''))],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(TRUE, [FALSE], new ExpectationFailedException(''))],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(FALSE, [FALSE, FALSE], NULL)],
-            [fn (self $testCase) => $testCase->createInvokeTestCase(FALSE, [FALSE], NULL)],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(true, [true], null)],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(true, [true, true], null)],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(true, [false, true], null)],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(true, [false, false], new ExpectationFailedException(''))],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(true, [false], new ExpectationFailedException(''))],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(false, [false, false], null)],
+            [fn (self $testCase) => $testCase->createInvokeTestCase(false, [false], null)],
         ];
     }
 
@@ -221,19 +221,19 @@ class InvocationMockerTest extends Testcase
     public static function provideMatches(): array
     {
         return [
-            [fn (self $testCase) => $testCase->createMatchesTestCase([TRUE], TRUE)],
-            [fn (self $testCase) => $testCase->createMatchesTestCase([TRUE, TRUE], TRUE)],
-            [fn (self $testCase) => $testCase->createMatchesTestCase([FALSE], FALSE)],
-            [fn (self $testCase) => $testCase->createMatchesTestCase([TRUE, FALSE], FALSE)],
-            [fn (self $testCase) => $testCase->createMatchesTestCase([FALSE, TRUE], FALSE)],
-            [fn (self $testCase) => $testCase->createMatchesTestCase([FALSE, FALSE], FALSE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([true], true)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([true, true], true)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([false], false)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([true, false], false)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([false, true], false)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase([false, false], false)],
         ];
     }
 
     private function createMatchesTestCase(array $matchersWillMatch, bool $expected): array
     {
         $invocation = $this->createMock(Invocation::class);
-        $willSoFar = TRUE;
+        $willSoFar = true;
         return [
             array_map(
                 function ($willMatch) use ($invocation, &$willSoFar)
@@ -243,7 +243,7 @@ class InvocationMockerTest extends Testcase
                         ->method('matches')
                         ->with($invocation)
                         ->willReturn($willMatch);
-                    $willSoFar &= $willMatch;  // Set to FALSE after first non-match.
+                    $willSoFar &= $willMatch;  // Set to false after first non-match.
                     return $object;
                 },
                 $matchersWillMatch

@@ -19,8 +19,8 @@ class MockTraitTest extends Testcase
      */
     public function testCreateDatabaseMock(): void
     {
-        $setMockObject = NULL;
-        $registerMockObject = NULL;
+        $setMockObject = null;
+        $registerMockObject = null;
         $db = $this->createMock(DatabaseDriverInterface::class);
         $db->expects(static::once())
             ->method('setMockObject')
@@ -29,11 +29,11 @@ class MockTraitTest extends Testcase
                 {
                     static::assertInstanceOf(Mock::class, $mock);
                     $setMockObject = $mock;
-                    return TRUE;
+                    return true;
                 }
             ));
         $methods = ['getDatabaseDriver'];
-        $object = $this->getMockForTrait(MockTrait::class, [], '', TRUE, TRUE, TRUE, $methods);
+        $object = $this->getMockForTrait(MockTrait::class, [], '', true, true, true, $methods);
         $object->expects(static::once())
             ->method('getDatabaseDriver')
             ->will($this->returnValue($db));
@@ -46,7 +46,7 @@ class MockTraitTest extends Testcase
                     $mock = static::getObjectPropertyValue($mockObject, 'object');
                     static::assertInstanceOf(Mock::class, $mock);
                     $registerMockObject = $mock;
-                    return TRUE;
+                    return true;
                 }
             ));
         $actual = $object->createDatabaseMock();

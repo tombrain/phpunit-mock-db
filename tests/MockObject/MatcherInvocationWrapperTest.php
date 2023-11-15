@@ -71,12 +71,12 @@ class MatcherInvocationWrapperTest extends Testcase
             [
                 fn (self $testCase) => $testCase->createMock(BaseInvocation::class),
                 fn (self $testCase) => $testCase->createMockObjectInvocation(),
-                TRUE,
+                true,
             ],
             [
                 fn (self $testCase) => $testCase->createMock(BaseInvocation::class),
                 fn (self $testCase) => $testCase->createMockObjectInvocation(),
-                FALSE,
+                false,
             ],
         ];
     }
@@ -109,19 +109,19 @@ class MatcherInvocationWrapperTest extends Testcase
         return [
             [
                 fn (self $testCase) => $testCase->createMock(InvocationOrder::class),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::once(),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::never(),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::any(),
-                TRUE,
+                true,
             ],
         ];
     }
@@ -142,23 +142,23 @@ class MatcherInvocationWrapperTest extends Testcase
         return [
             [
                 fn (self $testCase) => $testCase->createMock(InvocationOrder::class),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::once(),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::any(),
-                FALSE,
+                false,
             ],
             [
                 fn (self $testCase) => static::never(),
-                TRUE,
+                true,
             ],
             [
                 fn (self $testCase) => static::exactly(0),
-                TRUE,
+                true,
             ],
         ];
     }
@@ -188,10 +188,10 @@ class MatcherInvocationWrapperTest extends Testcase
 
     private function createObject(
         InvocationOrder $invocation,
-        InvocationsContainer $container = NULL
+        InvocationsContainer $container = null
     ): MatcherInvocationWrapper
     {
-        if ($container === NULL)
+        if ($container === null)
         {
             $container = $this->createMock(InvocationsContainer::class);
         }

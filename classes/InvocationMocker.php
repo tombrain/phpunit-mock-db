@@ -26,7 +26,7 @@ class InvocationMocker implements MatcherCollection, Invokable
     /**
      * @var  boolean
      */
-    private $requireMatch = TRUE;
+    private $requireMatch = true;
 
     /**
      * @param  MatcherInvocation  $matcher
@@ -109,15 +109,15 @@ class InvocationMocker implements MatcherCollection, Invokable
     {
         // Not sure what is this method for, other than implementing `Invokable` interface.
         // One with the same name from `PHPUnit\Framework\MockObject\InvocationMocker`
-        // returns TRUE only if all matchers have matched.
+        // returns true only if all matchers have matched.
         foreach ($this->matchers as $matcher)
         {
             if (!$matcher->matches($invocation))
             {
-                return FALSE;
+                return false;
             }
         }
-        return TRUE;
+        return true;
     }
 
     /** 

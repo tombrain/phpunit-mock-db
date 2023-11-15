@@ -178,7 +178,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($callback)
             {
                 static::assertStub($stub, Stub\InvokeCallbackStub::class, 'callback', $callback);
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -190,7 +190,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($callbacks)
             {
                 static::assertConsecutiveStubs($stub, $callbacks, Stub\InvokeCallbackStub::class, 'callback');
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -217,7 +217,7 @@ class InvocationMockerTest extends Testcase
             ['id' => 3],
         ];
         return [
-            static::createWillReturnResultSetTestCaseSingleCall(NULL),
+            static::createWillReturnResultSetTestCaseSingleCall(null),
             static::createWillReturnResultSetTestCaseSingleCall($resultSet1),
             static::createWillReturnResultSetTestCaseSingleCall($resultSet2),
             static::createWillReturnResultSetTestCaseSingleCall(new ArrayObject($resultSet2)),
@@ -233,7 +233,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($value)
             {
                 static::assertStub($stub, Stub\ReturnResultSetStub::class, 'value', $value);
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -245,7 +245,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($values)
             {
                 static::assertConsecutiveStubs($stub, $values, Stub\ReturnResultSetStub::class, 'value');
-                return TRUE;
+                return true;
             }
         ];
     }
@@ -276,7 +276,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($value)
             {
                 static::assertStub($stub, Stub\SetAffectedRowsStub::class, 'value', $value);
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -288,7 +288,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($values)
             {
                 static::assertConsecutiveStubs($stub, $values, Stub\SetAffectedRowsStub::class, 'value');
-                return TRUE;
+                return true;
             }
         ];
     }
@@ -306,10 +306,10 @@ class InvocationMockerTest extends Testcase
     public static function provideWillSetLastInsertId(): array
     {
         return [
-            static::createWillSetLastInsertIdTestCaseSingleCall(NULL),
+            static::createWillSetLastInsertIdTestCaseSingleCall(null),
             static::createWillSetLastInsertIdTestCaseSingleCall(123),
             static::createWillSetLastInsertIdTestCaseSingleCall('456'),
-            static::createWillSetLastInsertIdTestCaseConsecutiveCalls([NULL, 1, 2]),
+            static::createWillSetLastInsertIdTestCaseConsecutiveCalls([null, 1, 2]),
         ];
     }
 
@@ -320,7 +320,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($value)
             {
                 static::assertStub($stub, Stub\SetLastInsertIdStub::class, 'value', $value);
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -332,7 +332,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($values)
             {
                 static::assertConsecutiveStubs($stub, $values, Stub\SetLastInsertIdStub::class, 'value');
-                return TRUE;
+                return true;
             }
         ];
     }
@@ -362,7 +362,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($value)
             {
                 static::assertStub($stub, Stub\ThrowExceptionStub::class, 'exception', $value);
-                return TRUE;
+                return true;
             },
         ];
     }
@@ -374,7 +374,7 @@ class InvocationMockerTest extends Testcase
             function ($stub) use ($values)
             {
                 static::assertConsecutiveStubs($stub, $values, Stub\ThrowExceptionStub::class, 'exception');
-                return TRUE;
+                return true;
             }
         ];
     }

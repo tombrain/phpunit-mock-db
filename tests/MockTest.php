@@ -52,7 +52,7 @@ class MockTest extends Testcase
     public static function provideExpects(): array
     {
         return [
-            [fn (self $testCase) => static::createExpectsTestCaseException(NULL)],
+            [fn (self $testCase) => static::createExpectsTestCaseException(null)],
             [fn (self $testCase) => static::createExpectsTestCaseException(3.14)],
             [fn (self $testCase) => static::createExpectsTestCaseException('foo')],
             [fn (self $testCase) => static::createExpectsTestCaseMockDbInvocationMatcher($testCase->createMock(RecordedInvocation::class))],
@@ -91,7 +91,7 @@ class MockTest extends Testcase
     public function testInvoke(array $arguments, $expected): void
     {
         $invocationMocker = new Doubles\InvocationMockerDouble;
-        $invocationMocker->setRequireMatch(FALSE);
+        $invocationMocker->setRequireMatch(false);
         $object = new Doubles\MockDouble($invocationMocker);
 
         $this->expectExceptionFromArgument($expected);
@@ -173,8 +173,8 @@ class MockTest extends Testcase
     public static function provideRequireMatch(): array
     {
         return [
-            [TRUE],
-            [FALSE],
+            [true],
+            [false],
         ];
     }
 }
