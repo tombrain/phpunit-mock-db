@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Builder;
 
@@ -63,7 +65,8 @@ class InvocationMocker
      */
     public function query($constraint): self
     {
-        if (is_string($constraint)) {
+        if (is_string($constraint))
+        {
             $constraint = new EqualsSQLQueriesConstraint($constraint);
         }
         $this->matcher->setQueryMatcher(new QueryMatcher($constraint));
@@ -107,7 +110,8 @@ class InvocationMocker
     public function willInvokeCallback(callable $callback, ...$nextCallbacks): self
     {
         return $this->createStub(
-            function ($argument) {
+            function ($argument)
+            {
                 return new InvokeCallbackStub($argument);
             },
             $callback,
@@ -123,7 +127,8 @@ class InvocationMocker
     public function willReturnResultSet($resultSet, ...$nextSets): self
     {
         return $this->createStub(
-            function ($argument) {
+            function ($argument)
+            {
                 return new ReturnResultSetStub($argument);
             },
             $resultSet,
@@ -139,7 +144,8 @@ class InvocationMocker
     public function willSetAffectedRows($count, ...$nextCounts): self
     {
         return $this->createStub(
-            function ($argument) {
+            function ($argument)
+            {
                 return new SetAffectedRowsStub($argument);
             },
             $count,
@@ -155,7 +161,8 @@ class InvocationMocker
     public function willSetLastInsertId($value, ...$nextValues): self
     {
         return $this->createStub(
-            function ($argument) {
+            function ($argument)
+            {
                 return new SetLastInsertIdStub($argument);
             },
             $value,
@@ -171,7 +178,8 @@ class InvocationMocker
     public function willThrowException(Throwable $exception, ...$nextExceptions): self
     {
         return $this->createStub(
-            function ($argument) {
+            function ($argument)
+            {
                 return new ThrowExceptionStub($argument);
             },
             $exception,
@@ -187,7 +195,8 @@ class InvocationMocker
      */
     private function createStub(callable $callback, $argument, array $nextArguments): self
     {
-        if ( ! $nextArguments) {
+        if (!$nextArguments)
+        {
             return $this->will($callback($argument));
         }
         return $this->will(

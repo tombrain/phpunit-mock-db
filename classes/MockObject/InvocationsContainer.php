@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\MockObject;
 
@@ -28,8 +30,10 @@ class InvocationsContainer
      */
     public function getMockObjectInvocation(BaseInvocation $invocation)
     {
-        for ($i = 0; $i < count($this->baseInvocations); $i++) {
-            if ($this->baseInvocations[$i] === $invocation) {
+        for ($i = 0; $i < count($this->baseInvocations); $i++)
+        {
+            if ($this->baseInvocations[$i] === $invocation)
+            {
                 return $this->mockObjectInvocations[$i];
             }
         }

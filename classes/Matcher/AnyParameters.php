@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Matcher;
 
@@ -33,9 +35,10 @@ class AnyParameters implements ParametersMatcher
      * @param  BaseInvocation  $invocation
      */
     public function invoked(BaseInvocation $invocation): void
-    {}
+    {
+    }
 
     public function verify(): void
-    {}
-
+    {
+    }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -37,10 +39,12 @@ class MockTest extends Testcase
 
         static::assertInstanceOf(InvocationMockerBuilder::class, $builder);
         $actual = $invocationMocker->matcher;
-        if (is_callable($expected)) {
+        if (is_callable($expected))
+        {
             call_user_func($expected, $actual, $container);
         }
-        else {
+        else
+        {
             static::assertSame($expected, $actual);
         }
     }
@@ -48,13 +52,13 @@ class MockTest extends Testcase
     public static function provideExpects(): array
     {
         return [
-            [ fn (self $testCase) => static::createExpectsTestCaseException(NULL) ],
-            [ fn (self $testCase) => static::createExpectsTestCaseException(3.14) ],
-            [ fn (self $testCase) => static::createExpectsTestCaseException('foo') ],
-            [ fn (self $testCase) => static::createExpectsTestCaseMockDbInvocationMatcher($testCase->createMock(RecordedInvocation::class)) ],
-            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::any()) ],
-            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::once()) ],
-            [ fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::never()) ],
+            [fn (self $testCase) => static::createExpectsTestCaseException(NULL)],
+            [fn (self $testCase) => static::createExpectsTestCaseException(3.14)],
+            [fn (self $testCase) => static::createExpectsTestCaseException('foo')],
+            [fn (self $testCase) => static::createExpectsTestCaseMockDbInvocationMatcher($testCase->createMock(RecordedInvocation::class))],
+            [fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::any())],
+            [fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::once())],
+            [fn (self $testCase) => static::createExpectsTestCaseWrappedInvocationMatcher(static::never())],
         ];
     }
 
@@ -72,7 +76,8 @@ class MockTest extends Testcase
     {
         return [
             $matcher,
-            function ($actual, $container) use ($matcher) {
+            function ($actual, $container) use ($matcher)
+            {
                 static::assertInstanceOf(MatcherInvocationWrapper::class, $actual);
                 static::assertSame($container, static::getObjectPropertyValue($actual, 'container'));
                 static::assertSame($matcher, static::getObjectPropertyValue($actual, 'invocation'));
@@ -92,10 +97,12 @@ class MockTest extends Testcase
         $this->expectExceptionFromArgument($expected);
         $actual = $object->invoke(...$arguments);
         static::assertSame($invocationMocker->invoked, $actual);
-        if (is_callable($expected)) {
+        if (is_callable($expected))
+        {
             call_user_func($expected, $actual);
         }
-        else {
+        else
+        {
             static::assertSame($expected, $actual);
         }
     }
@@ -114,7 +121,8 @@ class MockTest extends Testcase
     {
         return [
             [$query, $parameters],
-            function ($actual) use ($query, $parameters) {
+            function ($actual) use ($query, $parameters)
+            {
                 static::assertInstanceOf(QueryInvocation::class, $actual);
                 static::assertSame($query, $actual->getQuery());
                 static::assertSame($parameters, $actual->getParameters());

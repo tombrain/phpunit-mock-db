@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Invocation;
 
@@ -48,7 +50,8 @@ class KeywordBasedQueryInvocationFactoryTest extends Testcase
     {
         return [
             $sql,
-            function (Invocation $actual) {
+            function (Invocation $actual)
+            {
                 static::assertSame(0, $actual->getAffectedRows());
                 static::assertNull($actual->getLastInsertId());
                 static::assertNull($actual->getResultSet());
@@ -60,7 +63,8 @@ class KeywordBasedQueryInvocationFactoryTest extends Testcase
     {
         return [
             $sql,
-            function (Invocation $actual) {
+            function (Invocation $actual)
+            {
                 static::assertSame(0, $actual->getAffectedRows());
                 static::assertSame(1, $actual->getLastInsertId());
                 static::assertNull($actual->getResultSet());
@@ -72,7 +76,8 @@ class KeywordBasedQueryInvocationFactoryTest extends Testcase
     {
         return [
             $sql,
-            function (Invocation $actual) {
+            function (Invocation $actual)
+            {
                 static::assertSame([], $actual->getResultSet());
                 static::assertNull($actual->getAffectedRows());
                 static::assertNull($actual->getLastInsertId());
@@ -84,7 +89,8 @@ class KeywordBasedQueryInvocationFactoryTest extends Testcase
     {
         return [
             $sql,
-            function (Invocation $actual) {
+            function (Invocation $actual)
+            {
                 static::assertNull($actual->getAffectedRows());
                 static::assertNull($actual->getLastInsertId());
                 static::assertNull($actual->getResultSet());

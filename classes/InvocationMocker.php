@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -74,13 +76,16 @@ class InvocationMocker implements MatcherCollection, Invokable
     public function invoke(Invocation $invocation): void
     {
         $invoked = 0;
-        foreach ($this->matchers as $match) {
-            if ($match->matches($invocation)) {
+        foreach ($this->matchers as $match)
+        {
+            if ($match->matches($invocation))
+            {
                 $match->invoked($invocation);
                 $invoked++;
             }
         }
-        if ( ! $invoked && $this->requireMatch) {
+        if (!$invoked && $this->requireMatch)
+        {
             $parameters = $invocation->getParameters();
             $exporter = new Exporter;
 
@@ -105,8 +110,10 @@ class InvocationMocker implements MatcherCollection, Invokable
         // Not sure what is this method for, other than implementing `Invokable` interface.
         // One with the same name from `PHPUnit\Framework\MockObject\InvocationMocker`
         // returns TRUE only if all matchers have matched.
-        foreach ($this->matchers as $matcher) {
-            if ( ! $matcher->matches($invocation)) {
+        foreach ($this->matchers as $matcher)
+        {
+            if (!$matcher->matches($invocation))
+            {
                 return FALSE;
             }
         }
@@ -118,7 +125,8 @@ class InvocationMocker implements MatcherCollection, Invokable
      */
     public function verify(): void
     {
-        foreach ($this->matchers as $matcher) {
+        foreach ($this->matchers as $matcher)
+        {
             $matcher->verify();
         }
     }

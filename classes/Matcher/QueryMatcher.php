@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Matcher;
 
@@ -31,7 +33,7 @@ class QueryMatcher implements Invocation
      */
     public function toString(): string
     {
-        return 'query '.$this->constraint->toString();
+        return 'query ' . $this->constraint->toString();
     }
 
     /**
@@ -47,8 +49,10 @@ class QueryMatcher implements Invocation
      * @param  BaseInvocation  $invocation
      */
     public function invoked(BaseInvocation $invocation): void
-    {}
+    {
+    }
 
     public function verify(): void
-    {}
+    {
+    }
 }

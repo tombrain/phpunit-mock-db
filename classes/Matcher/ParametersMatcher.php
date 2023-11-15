@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Matcher;
 
@@ -9,4 +11,5 @@ namespace Cz\PHPUnit\MockDB\Matcher;
  * @license  MIT License
  */
 interface ParametersMatcher extends Invocation
-{}
+{
+}

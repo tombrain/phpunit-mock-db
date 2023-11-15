@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -19,7 +21,8 @@ abstract class Testcase extends FrameworkTestCase
      */
     public function expectExceptionFromArgument($expected): void
     {
-        if ($expected instanceof Exception) {
+        if ($expected instanceof Exception)
+        {
             $this->expectException(get_class($expected));
         }
     }

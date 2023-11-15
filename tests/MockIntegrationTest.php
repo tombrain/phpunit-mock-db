@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -23,7 +25,8 @@ class MockIntegrationTest extends Testcase
         $mock = $this->createObject();
         static::setupMatchers($mock, $matchers);
         $this->callInvocations($mock, $invocations);
-        if ( ! $willVerify) {
+        if (!$willVerify)
+        {
             $this->expectExceptionFromArgument(static::createExpectationFailedException());
         }
         static::assertNull($mock->verify());  // At the very least, assert this to avoid 'risky' test.
@@ -31,24 +34,31 @@ class MockIntegrationTest extends Testcase
 
     private static function setupMatchers(Mock $mock, array $matchers): void
     {
-        foreach ($matchers as $options) {
+        foreach ($matchers as $options)
+        {
             // `$im` is being reassigned multiple times to emulate calls chaining.
             $im = $mock->expects($options['expects']);
-            if (isset($options['query'])) {
+            if (isset($options['query']))
+            {
                 $im = $im->query($options['query']);
             }
-            if (isset($options['with'])) {
+            if (isset($options['with']))
+            {
                 $im = $im->with($options['with']);
             }
-            if (isset($options['withAnyParameters'])) {
+            if (isset($options['withAnyParameters']))
+            {
                 $im = $im->withAnyParameters();
             }
-            if (isset($options['will'])) {
+            if (isset($options['will']))
+            {
                 $im = $im->will($options['will']);
             }
-            if (isset($options['onConsecutiveCalls'])) {
+            if (isset($options['onConsecutiveCalls']))
+            {
                 $im = $im->onConsecutiveCalls();
-                foreach ($options['onConsecutiveCalls'] as $call) {
+                foreach ($options['onConsecutiveCalls'] as $call)
+                {
                     $im->will($call);
                 }
                 $im = $im->done();
@@ -58,18 +68,23 @@ class MockIntegrationTest extends Testcase
 
     private function callInvocations(Mock $mock, array $invocations): void
     {
-        foreach ($invocations as $options) {
-            try {
+        foreach ($invocations as $options)
+        {
+            try
+            {
                 $invocation = $mock->invoke(...$options['invoke']);
             }
-            catch (Throwable $e) {
-                if ( ! $options['expected'] instanceof Throwable) {
+            catch (Throwable $e)
+            {
+                if (!$options['expected'] instanceof Throwable)
+                {
                     throw $e;
                 }
                 static::assertInstanceOf(get_class($options['expected']), $e);
                 continue;
             }
-            if ($options['expected'] instanceof Throwable) {
+            if ($options['expected'] instanceof Throwable)
+            {
                 $this->fail('Expected exception not thrown');
             }
             $actual = $invocation->{$options['result']}();

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -23,7 +25,8 @@ class MockTraitTest extends Testcase
         $db->expects(static::once())
             ->method('setMockObject')
             ->with(static::callback(
-                function ($mock) use ( & $setMockObject) {
+                function ($mock) use (&$setMockObject)
+                {
                     static::assertInstanceOf(Mock::class, $mock);
                     $setMockObject = $mock;
                     return TRUE;
@@ -37,7 +40,8 @@ class MockTraitTest extends Testcase
         $object->expects(static::once())
             ->method('registerMockObject')
             ->with(static::callback(
-                function ($mockObject) use ( & $registerMockObject) {
+                function ($mockObject) use (&$registerMockObject)
+                {
                     static::assertInstanceOf(MockWrapper::class, $mockObject);
                     $mock = static::getObjectPropertyValue($mockObject, 'object');
                     static::assertInstanceOf(Mock::class, $mock);

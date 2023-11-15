@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\MockObject;
 
@@ -52,7 +54,8 @@ class MockWrapper implements MockObject
     public function __phpunit_verify(bool $unsetInvocationMocker = TRUE): void
     {
         $this->object->verify();
-        if ($unsetInvocationMocker) {
+        if ($unsetInvocationMocker)
+        {
             $this->object->unsetInvocationMocker();
         }
     }
@@ -96,5 +99,4 @@ class MockWrapper implements MockObject
     {
         throw new LogicException('Not supported');
     }
-
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -118,7 +120,8 @@ class MatcherTest extends Testcase
         $this->setupMockObject($invocationMatcher, $invocationMatcherSetup);
 
         $object = new Matcher($invocationMatcher);
-        if ($stubSetup !== NULL) {
+        if ($stubSetup !== NULL)
+        {
             $stub = $this->createMock(Stub::class);
             $this->setupMockObject($stub, $stubSetup);
             $object->setStub($stub);
@@ -130,8 +133,8 @@ class MatcherTest extends Testcase
     public static function provideInvoked(): array
     {
         return [
-            [ fn (self $testCase) => $testCase->createInvokedTestCase(FALSE) ],
-            [ fn (self $testCase) => $testCase->createInvokedTestCase(TRUE) ],
+            [fn (self $testCase) => $testCase->createInvokedTestCase(FALSE)],
+            [fn (self $testCase) => $testCase->createInvokedTestCase(TRUE)],
         ];
     }
 
@@ -151,13 +154,13 @@ class MatcherTest extends Testcase
             $withStub
                 ? NULL
                 : [
-                      'invoke' => [
-                          [
-                              'expects' => static::once(),
-                              'with' => [$invocation],
-                          ],
-                      ],
-                  ],
+                    'invoke' => [
+                        [
+                            'expects' => static::once(),
+                            'with' => [$invocation],
+                        ],
+                    ],
+                ],
         ];
     }
 
@@ -166,13 +169,14 @@ class MatcherTest extends Testcase
      */
     public function testMatches(callable $callable): void
     {
-        list($invocation,$invocationMatcherSetup, $queryMatcherSetup, $expected) = $callable($this);
+        list($invocation, $invocationMatcherSetup, $queryMatcherSetup, $expected) = $callable($this);
 
         $invocationMatcher = $this->createMock(RecordedInvocation::class);
         $this->setupMockObject($invocationMatcher, $invocationMatcherSetup);
 
         $object = new Matcher($invocationMatcher);
-        if ($queryMatcherSetup !== NULL) {
+        if ($queryMatcherSetup !== NULL)
+        {
             $queryMatcher = $this->createMock(QueryMatcher::class);
             $this->setupMockObject($queryMatcher, $queryMatcherSetup);
             $object->setQueryMatcher($queryMatcher);
@@ -184,12 +188,12 @@ class MatcherTest extends Testcase
     public static function provideMatches(): array
     {
         return [
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, NULL, TRUE) ],
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, TRUE, TRUE) ],
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, FALSE, FALSE) ],
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, NULL, FALSE) ],
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, TRUE, FALSE) ],
-            [ fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, FALSE, FALSE) ],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, NULL, TRUE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, TRUE, TRUE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(TRUE, FALSE, FALSE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, NULL, FALSE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, TRUE, FALSE)],
+            [fn (self $testCase) => $testCase->createMatchesTestCase(FALSE, FALSE, FALSE)],
         ];
     }
 
@@ -214,14 +218,14 @@ class MatcherTest extends Testcase
             $matchesQueryMatcher === NULL
                 ? NULL
                 : [
-                      'matches' => [
-                          [
-                              'expects' => $matchesInvocationMatcher ? static::once() : static::never(),
-                              'with' => [$invocation],
-                              'will' => static::returnValue($matchesQueryMatcher),
-                          ],
-                      ],
-                  ],
+                    'matches' => [
+                        [
+                            'expects' => $matchesInvocationMatcher ? static::once() : static::never(),
+                            'with' => [$invocation],
+                            'will' => static::returnValue($matchesQueryMatcher),
+                        ],
+                    ],
+                ],
             $expected,
         ];
     }
@@ -249,10 +253,12 @@ class MatcherTest extends Testcase
         );
 
         $object = new Matcher($invocationMatcher);
-        if ($queryMatcher !== NULL) {
+        if ($queryMatcher !== NULL)
+        {
             $object->setQueryMatcher($queryMatcher);
         }
-        if ($parametersRule !== NULL) {
+        if ($parametersRule !== NULL)
+        {
             $object->setParametersMatcher($parametersRule);
         }
 
@@ -298,14 +304,18 @@ class MatcherTest extends Testcase
 
     private function setupMockObject($object, array $setup): void
     {
-        foreach ($setup as $method => $invocations) {
-            foreach ($invocations as $invocation) {
+        foreach ($setup as $method => $invocations)
+        {
+            foreach ($invocations as $invocation)
+            {
                 $im = $object->expects($invocation['expects'])
                     ->method($method);
-                if (isset($invocation['with'])) {
+                if (isset($invocation['with']))
+                {
                     $im->with(...$invocation['with']);
                 }
-                if (isset($invocation['will'])) {
+                if (isset($invocation['will']))
+                {
                     $im->will($invocation['will']);
                 }
             }

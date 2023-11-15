@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Doubles;
 
@@ -20,7 +22,8 @@ class MockDouble extends Mock
     public function __construct(
         InvocationMocker $invocationMocker,
         InvocationsContainer $invocationsContainer = NULL
-    ) {
+    )
+    {
         $this->invocationMocker = $invocationMocker;
         $this->invocationsContainer = $invocationsContainer;
     }

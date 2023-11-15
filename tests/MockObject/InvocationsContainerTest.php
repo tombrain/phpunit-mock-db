@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\MockObject;
 
@@ -21,15 +23,17 @@ class InvocationsContainerTest extends Testcase
     {
         $invocations = $callable($this);
         $invocations = $invocations[0];
-        
+
         $object = new InvocationsContainer;
         $previousInvocations = [];
-        foreach ($invocations as $invocation) {
+        foreach ($invocations as $invocation)
+        {
             $wrappedInvocation = $object->getMockObjectInvocation($invocation);
             static::assertInstanceOf(MockObjectInvocation::class, $wrappedInvocation);
             $sameWrappedInvocation = $object->getMockObjectInvocation($invocation);
             static::assertSame($wrappedInvocation, $sameWrappedInvocation);
-            foreach ($previousInvocations as $previousWrappedInvocation) {
+            foreach ($previousInvocations as $previousWrappedInvocation)
+            {
                 static::assertNotSame($wrappedInvocation, $previousWrappedInvocation);
             }
             $previousInvocations[] = $wrappedInvocation;
@@ -39,8 +43,8 @@ class InvocationsContainerTest extends Testcase
     public static function provideGetMockObjectInvocation(): array
     {
         return [
-            [ fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(1) ],
-            [ fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(5) ],
+            [fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(1)],
+            [fn (self $testCase) => $testCase->createGetMockObjectInvocationTestCase(5)],
         ];
     }
 
@@ -48,7 +52,8 @@ class InvocationsContainerTest extends Testcase
     {
         return [
             array_map(
-                function () {
+                function ()
+                {
                     return $this->createMock(BaseInvocation::class);
                 },
                 array_fill(0, $invocationsCount, NULL)

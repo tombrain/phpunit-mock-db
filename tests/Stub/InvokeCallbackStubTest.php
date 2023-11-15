@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Stub;
 
@@ -26,7 +28,8 @@ class InvokeCallbackStubTest extends Testcase
     {
         return [
             [
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setResultSet([
                         ['id' => 1, 'name' => 'foo'],
                         ['id' => 2, 'name' => 'bar'],
@@ -39,14 +42,16 @@ class InvokeCallbackStubTest extends Testcase
                 ],
             ],
             [
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setAffectedRows(5);
                 },
                 'setAffectedRows',
                 5,
             ],
             [
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setLastInsertId(8);
                 },
                 'setLastInsertId',

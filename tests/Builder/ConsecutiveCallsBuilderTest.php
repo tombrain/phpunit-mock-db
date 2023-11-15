@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Builder;
 
@@ -73,7 +75,8 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWillInvokeCallback(callable $callback): void
     {
-        $object = $this->createMockObjectForWillTest(function ($stub) use ($callback) {
+        $object = $this->createMockObjectForWillTest(function ($stub) use ($callback)
+        {
             static::assertStub($stub, InvokeCallbackStub::class, 'callback', $callback);
             return TRUE;
         });
@@ -84,7 +87,9 @@ class ConsecutiveCallsBuilderTest extends Testcase
     public static function provideWillInvokeCallback(): array
     {
         return [
-            [function () {}],
+            [function ()
+            {
+            }],
         ];
     }
 
@@ -93,7 +98,8 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWillReturnResultSet(iterable $resultSet): void
     {
-        $object = $this->createMockObjectForWillTest(function ($stub) use ($resultSet) {
+        $object = $this->createMockObjectForWillTest(function ($stub) use ($resultSet)
+        {
             static::assertStub($stub, ReturnResultSetStub::class, 'value', $resultSet);
             return TRUE;
         });
@@ -119,7 +125,8 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWillSetAffectedRows(?int $count): void
     {
-        $object = $this->createMockObjectForWillTest(function ($stub) use ($count) {
+        $object = $this->createMockObjectForWillTest(function ($stub) use ($count)
+        {
             static::assertStub($stub, SetAffectedRowsStub::class, 'value', $count);
             return TRUE;
         });
@@ -141,7 +148,8 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWillSetLastInsertId($value): void
     {
-        $object = $this->createMockObjectForWillTest(function ($stub) use ($value) {
+        $object = $this->createMockObjectForWillTest(function ($stub) use ($value)
+        {
             static::assertStub($stub, SetLastInsertIdStub::class, 'value', $value);
             return TRUE;
         });
@@ -163,7 +171,8 @@ class ConsecutiveCallsBuilderTest extends Testcase
      */
     public function testWillThrowException(Throwable $value): void
     {
-        $object = $this->createMockObjectForWillTest(function ($stub) use ($value) {
+        $object = $this->createMockObjectForWillTest(function ($stub) use ($value)
+        {
             static::assertStub($stub, ThrowExceptionStub::class, 'exception', $value);
             return TRUE;
         });

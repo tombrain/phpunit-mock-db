@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -47,7 +49,7 @@ class Matcher implements MatcherInvocation
      */
     public function hasMatchers(): bool
     {
-        return ! $this->invocationMatcher->isAnyInvokedCount();
+        return !$this->invocationMatcher->isAnyInvokedCount();
     }
 
     /**
@@ -72,7 +74,8 @@ class Matcher implements MatcherInvocation
      */
     public function setQueryMatcher(QueryMatcher $matcher): void
     {
-        if ($this->hasQueryMatcher()) {
+        if ($this->hasQueryMatcher())
+        {
             throw new RuntimeException('Query matcher is already defined, cannot redefine');
         }
         $this->queryMatcher = $matcher;
@@ -100,7 +103,8 @@ class Matcher implements MatcherInvocation
      */
     public function setParametersMatcher(ParametersMatcher $matcher): void
     {
-        if ($this->hasParametersMatcher()) {
+        if ($this->hasParametersMatcher())
+        {
             throw new RuntimeException('Parameters rule is already defined, cannot redefine');
         }
         $this->parametersMatcher = $matcher;
@@ -120,7 +124,8 @@ class Matcher implements MatcherInvocation
     public function invoked(Invocation $invocation): void
     {
         $this->invocationMatcher->invoked($invocation);
-        if ($this->stub) {
+        if ($this->stub)
+        {
             $this->stub->invoke($invocation);
         }
     }
@@ -131,13 +136,16 @@ class Matcher implements MatcherInvocation
      */
     public function matches(Invocation $invocation): bool
     {
-        if ( ! $this->invocationMatcher->matches($invocation)) {
+        if (!$this->invocationMatcher->matches($invocation))
+        {
             return FALSE;
         }
-        elseif ($this->hasQueryMatcher() && ! $this->queryMatcher->matches($invocation)) {
+        elseif ($this->hasQueryMatcher() && !$this->queryMatcher->matches($invocation))
+        {
             return FALSE;
         }
-        elseif ($this->hasParametersMatcher() && ! $this->parametersMatcher->matches($invocation)) {
+        elseif ($this->hasParametersMatcher() && !$this->parametersMatcher->matches($invocation))
+        {
             return FALSE;
         }
         return TRUE;
@@ -148,20 +156,24 @@ class Matcher implements MatcherInvocation
      */
     public function verify(): void
     {
-        try {
+        try
+        {
             $this->invocationMatcher->verify();
 
             $invocationIsAny = $this->invocationMatcher->isAnyInvokedCount();
             $invocationIsNever = $this->invocationMatcher->isNeverInvokedCount();
 
-            if ($this->hasQueryMatcher() && ! $invocationIsAny && ! $invocationIsNever) {
+            if ($this->hasQueryMatcher() && !$invocationIsAny && !$invocationIsNever)
+            {
                 $this->queryMatcher->verify();
             }
-            if ($this->hasParametersMatcher() && ! $invocationIsAny && ! $invocationIsNever) {
+            if ($this->hasParametersMatcher() && !$invocationIsAny && !$invocationIsNever)
+            {
                 $this->parametersMatcher->verify();
             }
         }
-        catch (ExpectationFailedException $e) {
+        catch (ExpectationFailedException $e)
+        {
             throw new ExpectationFailedException(
                 sprintf(
                     "Expectation failed when %s.\n%s",
@@ -179,10 +191,12 @@ class Matcher implements MatcherInvocation
     {
         $list = [];
         $list[] = $this->invocationMatcher->toString();
-        if ($this->hasQueryMatcher()) {
-            $list[] = 'where '.$this->queryMatcher->toString();
+        if ($this->hasQueryMatcher())
+        {
+            $list[] = 'where ' . $this->queryMatcher->toString();
         }
-        if ($this->hasParametersMatcher()) {
+        if ($this->hasParametersMatcher())
+        {
             $list[] = $this->parametersMatcher->toString();
         }
         return implode(' ', $list);

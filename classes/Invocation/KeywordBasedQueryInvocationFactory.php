@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Invocation;
 
@@ -23,16 +25,20 @@ class KeywordBasedQueryInvocationFactory implements QueryInvocationFactoryInterf
     {
         $trimmed = trim($sql);
         $keyword = $this->getKeyword($trimmed);
-        if ($keyword) {
+        if ($keyword)
+        {
             $invocation = new QueryInvocation($trimmed);
-            if (in_array($keyword, ['UPDATE', 'DELETE'], TRUE)) {
+            if (in_array($keyword, ['UPDATE', 'DELETE'], TRUE))
+            {
                 $invocation->setAffectedRows(0);
             }
-            elseif (in_array($keyword, ['INSERT', 'REPLACE'], TRUE)) {
+            elseif (in_array($keyword, ['INSERT', 'REPLACE'], TRUE))
+            {
                 $invocation->setAffectedRows(0);
                 $invocation->setLastInsertId(1);
             }
-            elseif (in_array($keyword, ['SELECT', 'SHOW', 'EXEC', 'EXECUTE'], TRUE)) {
+            elseif (in_array($keyword, ['SELECT', 'SHOW', 'EXEC', 'EXECUTE'], TRUE))
+            {
                 $invocation->setResultSet([]);
             }
             return $invocation;
@@ -46,7 +52,7 @@ class KeywordBasedQueryInvocationFactory implements QueryInvocationFactoryInterf
      */
     protected function getKeyword(string $sql): string
     {
-        list ($keyword, ) = preg_split('#\s+#', $sql, 2);
+        list($keyword,) = preg_split('#\s+#', $sql, 2);
         return $keyword;
     }
 }

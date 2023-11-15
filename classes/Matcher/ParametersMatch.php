@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Matcher;
 
@@ -26,7 +28,8 @@ class ParametersMatch implements ParametersMatcher
      */
     public function __construct(array $parameters)
     {
-        foreach ($parameters as $index => $parameter) {
+        foreach ($parameters as $index => $parameter)
+        {
             $this->parameters[$index] = $parameter instanceof Constraint ? $parameter : new IsIdentical($parameter);
         }
     }
@@ -37,11 +40,14 @@ class ParametersMatch implements ParametersMatcher
     public function toString(): string
     {
         $text = 'with parameter';
-        foreach ($this->parameters as $index => $parameter) {
-            if ($index > 0 && $index === count($this->parameters) - 1) {
+        foreach ($this->parameters as $index => $parameter)
+        {
+            if ($index > 0 && $index === count($this->parameters) - 1)
+            {
                 $text .= ' and parameter';
             }
-            elseif ($index > 0) {
+            elseif ($index > 0)
+            {
                 $text .= ', parameter';
             }
             $text .= sprintf(' %d %s', $index + 1, $parameter->toString());
@@ -53,15 +59,18 @@ class ParametersMatch implements ParametersMatcher
     {
         $actual = $invocation->getParameters();
 
-        if (count($actual) < count($this->parameters)) {
+        if (count($actual) < count($this->parameters))
+        {
             $message = sprintf('Parameter count for invocation of `%s` is too low.', $invocation->getQuery());
-            if (count($this->parameters) === 1 && $this->parameters[0] instanceof IsAnything) {
+            if (count($this->parameters) === 1 && $this->parameters[0] instanceof IsAnything)
+            {
                 $message .= "\nTo allow 0 or more parameters with any value, omit ->with() or use ->withAnyParameters() instead.";
             }
             throw new ExpectationFailedException($message);
         }
 
-        foreach ($this->parameters as $index => $parameter) {
+        foreach ($this->parameters as $index => $parameter)
+        {
             $result = $parameter->evaluate(
                 $actual[$index],
                 sprintf(
@@ -72,7 +81,8 @@ class ParametersMatch implements ParametersMatcher
                 TRUE
             );
 
-            if ($result !== TRUE) {
+            if ($result !== TRUE)
+            {
                 return $result;
             }
         }
@@ -84,8 +94,10 @@ class ParametersMatch implements ParametersMatcher
      * @param  BaseInvocation  $invocation
      */
     public function invoked(BaseInvocation $invocation): void
-    {}
+    {
+    }
 
     public function verify(): void
-    {}
+    {
+    }
 }

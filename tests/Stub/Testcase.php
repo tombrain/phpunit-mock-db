@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Stub;
 
@@ -36,8 +38,10 @@ abstract class Testcase extends MockDB\Testcase
     protected function createInvocation(array $skipMethods = []): Invocation
     {
         $invocation = $this->createMock(Invocation::class);
-        foreach ($this->getAbstractMethods(Invocation::class) as $name) {
-            if ( ! in_array($name, $skipMethods)) {
+        foreach ($this->getAbstractMethods(Invocation::class) as $name)
+        {
+            if (!in_array($name, $skipMethods))
+            {
                 $invocation->expects(static::never())
                     ->method($name);
             }
@@ -53,12 +57,14 @@ abstract class Testcase extends MockDB\Testcase
     {
         $class = new ReflectionClass($className);
         return array_map(
-            function (ReflectionMethod $method) {
+            function (ReflectionMethod $method)
+            {
                 return $method->getName();
             },
             array_filter(
                 $class->getMethods(),
-                function (ReflectionMethod $method) {
+                function (ReflectionMethod $method)
+                {
                     return $method->isAbstract();
                 }
             )

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Builder;
 
@@ -30,7 +32,8 @@ abstract class Testcase extends MockDB\Testcase
         $stack = static::getObjectPropertyValue($stub, 'stack');
         static::assertIsArray($stack);
         static::assertCount(count($expectedItems), $stack);
-        for ($i = 0; $i < count($expectedItems); $i++) {
+        for ($i = 0; $i < count($expectedItems); $i++)
+        {
             static::assertStub($stack[$i], $expectedInstanceOf, $attribute, $expectedItems[$i]);
         }
     }

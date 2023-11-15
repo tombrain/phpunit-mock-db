@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -22,7 +24,7 @@ class TestFailure
     public static function exceptionToString(Throwable $error): string
     {
         $message = ThrowableToStringMapper::map($error);
-        
+
         return preg_replace('#^Method#', 'Database', $message);
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Stub;
 
@@ -30,8 +32,10 @@ class ConsecutiveCallsStub implements Stub
      */
     public function __construct(array $stack = [])
     {
-        foreach ($stack as $item) {
-            if ( ! $item instanceof Stub) {
+        foreach ($stack as $item)
+        {
+            if (!$item instanceof Stub)
+            {
                 throw new InvalidArgumentException('All items in stack must implement `Cz\PHPUnit\MockDB\Stub`');
             }
         }
@@ -52,7 +56,8 @@ class ConsecutiveCallsStub implements Stub
     public function invoke(Invocation $invocation): void
     {
         $this->current = array_shift($this->stack);
-        if ( ! $this->current) {
+        if (!$this->current)
+        {
             throw new RuntimeException('No more items left in stack');
         }
         $this->current->invoke($invocation);
@@ -63,10 +68,12 @@ class ConsecutiveCallsStub implements Stub
      */
     public function toString(): string
     {
-        if ($this->current) {
+        if ($this->current)
+        {
             return $this->current->toString();
         }
-        else {
+        else
+        {
             return sprintf('stack of %s item(s)', count($this->stack));
         }
     }

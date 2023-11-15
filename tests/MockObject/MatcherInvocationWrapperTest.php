@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\MockObject;
 
@@ -189,7 +191,8 @@ class MatcherInvocationWrapperTest extends Testcase
         InvocationsContainer $container = NULL
     ): MatcherInvocationWrapper
     {
-        if ($container === NULL) {
+        if ($container === NULL)
+        {
             $container = $this->createMock(InvocationsContainer::class);
         }
         return new MatcherInvocationWrapper($invocation, $container);

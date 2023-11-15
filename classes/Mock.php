@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -36,11 +38,13 @@ class Mock
      */
     public function expects($matcher): InvocationMockerBuilder
     {
-        if ($matcher instanceof InvocationOrder) {
+        if ($matcher instanceof InvocationOrder)
+        {
             $matcher = new MatcherInvocationWrapper($matcher, $this->getInvocationsContainer());
         }
-        if ( ! $matcher instanceof MatcherInvocation) {
-             throw new ImplementationException();
+        if (!$matcher instanceof MatcherInvocation)
+        {
+            throw new ImplementationException();
         }
         return $this->getInvocationMocker()
             ->expects($matcher);
@@ -54,13 +58,16 @@ class Mock
      */
     public function invoke($query, array $parameters = []): Invocation
     {
-        if ($query instanceof Invocation) {
+        if ($query instanceof Invocation)
+        {
             $invocation = $query;
-            if (func_num_args() !== 1) {
+            if (func_num_args() !== 1)
+            {
                 throw new LogicException('When argument #1 is Invocation object, passing the second argument makes no sense');
             }
         }
-        else {
+        else
+        {
             $invocation = new QueryInvocation($query, $parameters);
         }
         $this->getInvocationMocker()
@@ -82,7 +89,8 @@ class Mock
      */
     public function getInvocationMocker(): InvocationMocker
     {
-        if ($this->invocationMocker === NULL) {
+        if ($this->invocationMocker === NULL)
+        {
             $this->invocationMocker = new InvocationMocker;
         }
         return $this->invocationMocker;
@@ -101,7 +109,8 @@ class Mock
      */
     protected function getInvocationsContainer(): InvocationsContainer
     {
-        if ($this->invocationsContainer === NULL) {
+        if ($this->invocationsContainer === NULL)
+        {
             $this->invocationsContainer = new InvocationsContainer;
         }
         return $this->invocationsContainer;

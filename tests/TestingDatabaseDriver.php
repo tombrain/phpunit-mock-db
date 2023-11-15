@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -20,7 +22,8 @@ class TestingDatabaseDriver implements DatabaseDriverInterface
      */
     public function setMockObject(Mock $mock): void
     {
-        if ($this->mock !== NULL) {
+        if ($this->mock !== NULL)
+        {
             throw new LogicException('Mock already set');
         }
         $this->mock = $mock;
@@ -33,13 +36,16 @@ class TestingDatabaseDriver implements DatabaseDriverInterface
     public function query($query)
     {
         $invocation = $this->mock->invoke($query);
-        if (strpos($query, 'SELECT') === 0) {
+        if (strpos($query, 'SELECT') === 0)
+        {
             return $invocation->getResultSet();
         }
-        elseif (strpos($query, 'INSERT') === 0) {
+        elseif (strpos($query, 'INSERT') === 0)
+        {
             return $invocation->getLastInsertId();
         }
-        elseif (strpos($query, 'UPDATE') === 0 || strpos($query, 'DELETE') === 0) {
+        elseif (strpos($query, 'UPDATE') === 0 || strpos($query, 'DELETE') === 0)
+        {
             return $invocation->getAffectedRows();
         }
     }

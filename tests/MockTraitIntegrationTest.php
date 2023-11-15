@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB;
 
@@ -158,7 +160,8 @@ class MockTraitIntegrationTest extends Testcase
             ->query($query)
             ->willSetLastInsertId(...$expecteds);
 
-        foreach ($expecteds as $expected) {
+        foreach ($expecteds as $expected)
+        {
             $actual = $this->db->query($query);
             static::assertSame($expected, $actual);
         }
@@ -191,7 +194,8 @@ class MockTraitIntegrationTest extends Testcase
             ->query($query)
             ->willSetAffectedRows($expected);
 
-        for ($i = 0; $i < $expectTimes; $i++) {
+        for ($i = 0; $i < $expectTimes; $i++)
+        {
             $actual = $this->db->query($query);
             static::assertSame($expected, $actual);
         }
@@ -268,12 +272,15 @@ class MockTraitIntegrationTest extends Testcase
         $actual1 = $this->db->query($query);
         static::assertSame($expecteds[1], $actual1);
 
-        try {
+        try
+        {
             $this->db->query($query);
             $this->fail('Expected exception');
         }
-        catch (Throwable $e) {
-            if ($e instanceof FrameworkException) {
+        catch (Throwable $e)
+        {
+            if ($e instanceof FrameworkException)
+            {
                 throw $e;
             }
             static::assertInstanceOf(get_class($exception), $e);
@@ -321,7 +328,8 @@ class MockTraitIntegrationTest extends Testcase
         return [
             [
                 static::stringStartsWith('INSERT'),
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setLastInsertId(1);
                 },
                 'INSERT INTO `t1` VALUES ("foo")',
@@ -329,7 +337,8 @@ class MockTraitIntegrationTest extends Testcase
             ],
             [
                 static::stringStartsWith('UPDATE'),
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setAffectedRows(0);
                 },
                 'UPDATE `t1` SET `name` = "foo" WHERE `name` = "bar"',
@@ -337,7 +346,8 @@ class MockTraitIntegrationTest extends Testcase
             ],
             [
                 static::stringStartsWith('SELECT'),
-                function (Invocation $invocation) {
+                function (Invocation $invocation)
+                {
                     $invocation->setResultSet([['name' => 'foo']]);
                 },
                 'SELECT * FROM `t`',

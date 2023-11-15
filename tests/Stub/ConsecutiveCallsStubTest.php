@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Cz\PHPUnit\MockDB\Stub;
 
@@ -21,7 +23,7 @@ class ConsecutiveCallsStubTest extends Testcase
     public function testAddStub(array $initialStackCallableArray, callable $stubCallable): void
     {
         $initialStack = array();
-        foreach($initialStackCallableArray as $initialStackCallable)
+        foreach ($initialStackCallableArray as $initialStackCallable)
         {
             $initialStack[] = $initialStackCallable($this);
         }
@@ -59,7 +61,7 @@ class ConsecutiveCallsStubTest extends Testcase
     public function testInvoke(array $stackCallable, array $invocations): void
     {
         $stack = array();
-        foreach($stackCallable as $t)
+        foreach ($stackCallable as $t)
         {
             $stack[] = $t($this);
         }
@@ -113,7 +115,8 @@ class ConsecutiveCallsStubTest extends Testcase
         $stub = $this->createMock(Stub::class);
         $stub->expects(static::once())
             ->method('invoke')
-            ->willReturnCallback(function (Invocation $invocation) use ($method, $argument) {
+            ->willReturnCallback(function (Invocation $invocation) use ($method, $argument)
+            {
                 $invocation->$method($argument);
             });
         return $stub;
