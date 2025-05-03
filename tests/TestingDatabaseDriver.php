@@ -30,7 +30,7 @@ class TestingDatabaseDriver implements DatabaseDriverInterface
      * @param   string  $query
      * @return  mixed
      */
-    public function query($query)
+    public function query($query) : mixed
     {
         $invocation = $this->mock->invoke($query);
         if (strpos($query, 'SELECT') === 0) {
@@ -42,5 +42,6 @@ class TestingDatabaseDriver implements DatabaseDriverInterface
         elseif (strpos($query, 'UPDATE') === 0 || strpos($query, 'DELETE') === 0) {
             return $invocation->getAffectedRows();
         }
+        return null;
     }
 }
